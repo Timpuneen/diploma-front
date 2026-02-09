@@ -47,8 +47,8 @@ export function HeroSection() {
 
         <div className="mt-16 grid grid-cols-3 gap-8">
           {[
-            { value: "99.2%", label: "Accuracy" },
-            { value: "3", label: "Languages" },
+            { value: "67.69%", label: "Accuracy" },
+            { value: "2", label: "Languages" },
             { value: "<2s", label: "Analysis Time" },
           ].map((stat) => (
             <div key={stat.label}>

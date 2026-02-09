@@ -18,12 +18,6 @@ const LANGUAGES = [
     description: "Specialized Kazakh language model trained on academic and web text corpora.",
     status: "Stable",
   },
-  {
-    code: "EN",
-    name: "English",
-    description: "Comprehensive English detection with broad training data coverage.",
-    status: "Stable",
-  },
 ] as const;
 
 export function LanguagesSection() {
@@ -40,7 +34,7 @@ export function LanguagesSection() {
           </p>
         </div>
 
-        <div className="mt-16 grid gap-6 md:grid-cols-3">
+        <div className="mt-16 grid gap-6 md:grid-cols-2">
           {LANGUAGES.map((lang) => (
             <Card
               key={lang.code}
