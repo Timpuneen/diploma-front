@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/lib/auth-context";
+import { useLanguage } from "@/lib/language-context";
 import { ROUTES } from "@/lib/constants";
 import { toast } from "sonner";
 import { Loader2, Shield } from "lucide-react";
@@ -23,23 +24,24 @@ export function LoginForm() {
   const [password, setPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { login } = useAuth();
+  const { t } = useLanguage();
   const router = useRouter();
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
     if (!email || !password) {
-      toast.error("Please fill in all fields");
+      toast.error(t("loginFillAll"));
       return;
     }
 
     setIsSubmitting(true);
     try {
       await login({ email, password });
-      toast.success("Welcome back!");
+      toast.success(t("loginSuccess"));
       router.push(ROUTES.ANALYZE);
     } catch {
-      toast.error("Invalid email or password");
+      toast.error(t("loginInvalid"));
     } finally {
       setIsSubmitting(false);
     }
@@ -53,20 +55,20 @@ export function LoginForm() {
             <Shield className="h-8 w-8 text-primary" />
           </Link>
           <h1 className="mt-6 text-2xl font-bold text-foreground">
-            Welcome back
+            {t("loginWelcome")}
           </h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            Sign in to your account to continue
+            {t("loginSubtitle")}
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="mt-8 flex flex-col gap-5">
           <div className="flex flex-col gap-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">{t("loginEmail")}</Label>
             <Input
               id="email"
               type="email"
-              placeholder="you@example.com"
+              placeholder={t("loginEmailPlaceholder")}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               autoComplete="email"
@@ -76,19 +78,19 @@ export function LoginForm() {
 
           <div className="flex flex-col gap-2">
             <div className="flex items-center justify-between">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">{t("loginPassword")}</Label>
               <button
                 type="button"
                 className="text-xs text-primary hover:underline"
                 tabIndex={-1}
               >
-                Forgot password?
+                {t("loginForgotPassword")}
               </button>
             </div>
             <Input
               id="password"
               type="password"
-              placeholder="Enter your password"
+              placeholder={t("loginPasswordPlaceholder")}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               autoComplete="current-password"
@@ -100,21 +102,21 @@ export function LoginForm() {
             {isSubmitting ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Signing in...
+                {t("loginSubmitting")}
               </>
             ) : (
-              "Sign In"
+              t("loginSubmit")
             )}
           </Button>
         </form>
 
         <p className="mt-8 text-center text-sm text-muted-foreground">
-          {"Don't have an account? "}
+          {t("loginNoAccount")}
           <Link
             href={ROUTES.REGISTER}
             className="font-medium text-primary hover:underline"
           >
-            Sign up
+            {t("loginSignUp")}
           </Link>
         </p>
       </div>

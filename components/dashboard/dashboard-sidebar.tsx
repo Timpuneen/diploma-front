@@ -8,8 +8,10 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/auth-context";
+import { useLanguage } from "@/lib/language-context";
 import { ROUTES } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
+import { LanguageSwitcher } from "@/components/language-switcher";
 import {
   Shield,
   FileSearch,
@@ -18,16 +20,17 @@ import {
   LogOut,
 } from "lucide-react";
 
-const NAV_ITEMS = [
-  { href: ROUTES.ANALYZE, label: "Analyze Text", icon: FileSearch },
-  { href: ROUTES.HISTORY, label: "History", icon: History },
-  { href: ROUTES.PROFILE, label: "Profile", icon: UserCircle },
-] as const;
-
 export function DashboardSidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const { user, logout } = useAuth();
+  const { t } = useLanguage();
+
+  const NAV_ITEMS = [
+    { href: ROUTES.ANALYZE, label: t("sidebarAnalyze"), icon: FileSearch },
+    { href: ROUTES.HISTORY, label: t("sidebarHistory"), icon: History },
+    { href: ROUTES.PROFILE, label: t("sidebarProfile"), icon: UserCircle },
+  ];
 
   async function handleLogout() {
     await logout();
@@ -39,7 +42,7 @@ export function DashboardSidebar() {
       <div className="flex items-center gap-2 border-b border-border/50 px-6 py-5">
         <Shield className="h-6 w-6 text-primary" />
         <span className="text-lg font-semibold text-foreground">
-          AI Detector
+          {t("appName")}
         </span>
       </div>
 
@@ -67,6 +70,9 @@ export function DashboardSidebar() {
       </nav>
 
       <div className="border-t border-border/50 px-3 py-4">
+        <div className="mb-3 px-3">
+          <LanguageSwitcher compact />
+        </div>
         {user && (
           <div className="mb-3 px-3">
             <p className="truncate text-sm font-medium text-foreground">
@@ -83,7 +89,7 @@ export function DashboardSidebar() {
           onClick={handleLogout}
         >
           <LogOut className="h-4 w-4" />
-          Sign Out
+          {t("sidebarSignOut")}
         </Button>
       </div>
     </aside>

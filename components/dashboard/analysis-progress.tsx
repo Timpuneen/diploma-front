@@ -6,20 +6,23 @@
 
 import { useEffect, useState } from "react";
 import { Progress } from "@/components/ui/progress";
+import { useLanguage } from "@/lib/language-context";
+import type { TranslationKey } from "@/lib/i18n";
 import { Loader2 } from "lucide-react";
 
-const STEPS = [
-  "Preprocessing text...",
-  "Computing perplexity scores...",
-  "Analyzing burstiness patterns...",
-  "Calculating entropy metrics...",
-  "Running classification model...",
-  "Generating results...",
-] as const;
+const STEP_KEYS: TranslationKey[] = [
+  "progressStep1",
+  "progressStep2",
+  "progressStep3",
+  "progressStep4",
+  "progressStep5",
+  "progressStep6",
+];
 
 export function AnalysisProgress() {
   const [progress, setProgress] = useState(0);
   const [stepIndex, setStepIndex] = useState(0);
+  const { t } = useLanguage();
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -34,7 +37,7 @@ export function AnalysisProgress() {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setStepIndex((prev) => (prev + 1) % STEPS.length);
+      setStepIndex((prev) => (prev + 1) % STEP_KEYS.length);
     }, 500);
 
     return () => clearInterval(interval);
@@ -46,7 +49,7 @@ export function AnalysisProgress() {
       <div className="w-full max-w-md">
         <Progress value={progress} className="h-2" />
       </div>
-      <p className="text-sm text-muted-foreground">{STEPS[stepIndex]}</p>
+      <p className="text-sm text-muted-foreground">{t(STEP_KEYS[stepIndex])}</p>
     </div>
   );
 }

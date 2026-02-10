@@ -1,23 +1,26 @@
 "use client";
 
 /**
- * Landing page navigation bar with responsive mobile menu.
+ * Landing page navigation bar with responsive mobile menu and language switcher.
  */
 
 import { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ROUTES } from "@/lib/constants";
+import { useLanguage } from "@/lib/language-context";
+import { LanguageSwitcher } from "@/components/language-switcher";
 import { Menu, X, Shield } from "lucide-react";
-
-const NAV_LINKS = [
-  { href: "#features", label: "Features" },
-  { href: "#how-it-works", label: "How It Works" },
-  { href: "#languages", label: "Languages" },
-] as const;
 
 export function Navbar() {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const { t } = useLanguage();
+
+  const NAV_LINKS = [
+    { href: "#features", label: t("navFeatures") },
+    { href: "#how-it-works", label: t("navHowItWorks") },
+    { href: "#languages", label: t("navLanguages") },
+  ];
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 border-b border-border/50 bg-background/80 backdrop-blur-xl">
@@ -25,7 +28,7 @@ export function Navbar() {
         <Link href="/" className="flex items-center gap-2">
           <Shield className="h-6 w-6 text-primary" />
           <span className="text-lg font-semibold text-foreground">
-            AI Detector
+            {t("appName")}
           </span>
         </Link>
 
@@ -42,11 +45,12 @@ export function Navbar() {
         </div>
 
         <div className="hidden items-center gap-3 md:flex">
+          <LanguageSwitcher compact />
           <Button variant="ghost" asChild>
-            <Link href={ROUTES.LOGIN}>Sign In</Link>
+            <Link href={ROUTES.LOGIN}>{t("navSignIn")}</Link>
           </Button>
           <Button asChild>
-            <Link href={ROUTES.REGISTER}>Get Started</Link>
+            <Link href={ROUTES.REGISTER}>{t("navGetStarted")}</Link>
           </Button>
         </div>
 
@@ -73,12 +77,13 @@ export function Navbar() {
                 {link.label}
               </a>
             ))}
+            <LanguageSwitcher />
             <div className="flex flex-col gap-2 pt-2">
               <Button variant="ghost" asChild>
-                <Link href={ROUTES.LOGIN}>Sign In</Link>
+                <Link href={ROUTES.LOGIN}>{t("navSignIn")}</Link>
               </Button>
               <Button asChild>
-                <Link href={ROUTES.REGISTER}>Get Started</Link>
+                <Link href={ROUTES.REGISTER}>{t("navGetStarted")}</Link>
               </Button>
             </div>
           </div>

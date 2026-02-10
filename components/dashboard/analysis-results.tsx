@@ -7,6 +7,7 @@ import React from "react"
  */
 
 import type { AnalysisResult } from "@/lib/types";
+import { useLanguage } from "@/lib/language-context";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -28,11 +29,11 @@ interface AnalysisResultsProps {
 }
 
 /** Returns verdict-specific color class and icon. */
-function getVerdictConfig(verdict: AnalysisResult["verdict"]) {
+function getVerdictConfig(verdict: AnalysisResult["verdict"], t: (key: import("@/lib/i18n").TranslationKey) => string) {
   switch (verdict) {
     case "ai":
       return {
-        label: "AI-Generated",
+        label: t("resultAiGenerated"),
         color: "text-destructive",
         bgColor: "bg-destructive/10",
         borderColor: "border-destructive/30",
@@ -40,7 +41,7 @@ function getVerdictConfig(verdict: AnalysisResult["verdict"]) {
       };
     case "human":
       return {
-        label: "Human-Written",
+        label: t("resultHumanWritten"),
         color: "text-primary",
         bgColor: "bg-primary/10",
         borderColor: "border-primary/30",
@@ -48,7 +49,7 @@ function getVerdictConfig(verdict: AnalysisResult["verdict"]) {
       };
     case "mixed":
       return {
-        label: "Mixed Content",
+        label: t("resultMixed"),
         color: "text-[hsl(var(--warning))]",
         bgColor: "bg-[hsl(var(--warning))]/10",
         borderColor: "border-[hsl(var(--warning))]/30",
@@ -58,7 +59,8 @@ function getVerdictConfig(verdict: AnalysisResult["verdict"]) {
 }
 
 export function AnalysisResults({ result, onReset }: AnalysisResultsProps) {
-  const verdict = getVerdictConfig(result.verdict);
+  const { t } = useLanguage();
+  const verdict = getVerdictConfig(result.verdict, t);
   const VerdictIcon = verdict.icon;
 
   return (
@@ -77,12 +79,12 @@ export function AnalysisResults({ result, onReset }: AnalysisResultsProps) {
                 {verdict.label}
               </h2>
               <p className="text-sm text-muted-foreground">
-                {result.wordCount} words analyzed
+                {result.wordCount} {t("resultWordsAnalyzed")}
               </p>
             </div>
           </div>
           <Badge variant="outline" className={`${verdict.borderColor} ${verdict.color}`}>
-            {result.aiProbability}% AI Probability
+            {result.aiProbability}% {t("resultAiProbability")}
           </Badge>
         </CardContent>
       </Card>
