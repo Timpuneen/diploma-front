@@ -54,9 +54,9 @@ export default function HistoryPage() {
   return (
     <div className="mx-auto max-w-4xl px-6 py-8">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-foreground">History</h1>
+        <h1 className="text-2xl font-bold text-foreground">{t.historyPage.title}</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          View your past text analyses
+          {t.historyPage.subtitle}
         </p>
       </div>
 
@@ -68,10 +68,10 @@ export default function HistoryPage() {
         <div className="flex flex-col items-center justify-center py-20 text-center">
           <FileSearch className="h-12 w-12 text-muted-foreground" />
           <h3 className="mt-4 text-lg font-semibold text-foreground">
-            No analyses yet
+            {t.historyPage.noAnalyses}
           </h3>
           <p className="mt-1 text-sm text-muted-foreground">
-            Your analysis history will appear here
+            {t.historyPage.historyAppear}
           </p>
         </div>
       ) : (
@@ -87,7 +87,7 @@ export default function HistoryPage() {
                     {item.textPreview}
                   </p>
                   <div className="mt-1 flex items-center gap-3 text-xs text-muted-foreground">
-                    <span>{item.wordCount} words</span>
+                    <span>{item.wordCount} {t.historyPage.words}</span>
                     <span>
                       {new Date(item.createdAt).toLocaleDateString()}
                     </span>

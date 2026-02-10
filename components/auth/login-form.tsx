@@ -16,7 +16,6 @@ import { Label } from "@/components/ui/label";
 import { useAuth } from "@/lib/auth-context";
 import { ROUTES } from "@/lib/constants";
 import { useLocale } from "@/lib/i18n/locale-context";
-import { LanguageSwitcher } from "@/components/language-switcher";
 import { toast } from "sonner";
 import { Loader2, Shield } from "lucide-react";
 
@@ -51,9 +50,6 @@ export function LoginForm() {
   return (
     <div className="flex min-h-screen items-center justify-center px-6">
       <div className="w-full max-w-md">
-        <div className="flex justify-end mb-4">
-          <LanguageSwitcher variant="outline" />
-        </div>
         <div className="text-center">
           <Link href="/" className="inline-flex items-center gap-2">
             <Shield className="h-8 w-8 text-primary" />
