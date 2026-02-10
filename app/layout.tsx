@@ -2,6 +2,7 @@ import React from "react"
 import type { Metadata, Viewport } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
+import { LocaleProvider } from "@/lib/i18n/locale-context";
 
 import "./globals.css";
 
@@ -30,10 +31,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="ru">
       <body className="font-sans antialiased min-h-screen">
-        {children}
-        <Toaster />
+        <LocaleProvider>
+          {children}
+          <Toaster />
+        </LocaleProvider>
       </body>
     </html>
   );

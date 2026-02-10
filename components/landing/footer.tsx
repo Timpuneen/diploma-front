@@ -1,10 +1,15 @@
+"use client";
+
 /**
  * Landing page footer with links and copyright.
  */
 
 import { Shield } from "lucide-react";
+import { useLocale } from "@/lib/i18n/locale-context";
 
 export function Footer() {
+  const { t } = useLocale();
+
   return (
     <footer className="border-t border-border/50 px-6 py-12">
       <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-6 md:flex-row">
@@ -16,11 +21,11 @@ export function Footer() {
         </div>
 
         <p className="text-sm text-muted-foreground">
-          Diploma project — Automated AI text detection system
+          {t.footer.description}
         </p>
 
         <p className="text-xs text-muted-foreground">
-          {new Date().getFullYear()} All rights reserved.
+          {new Date().getFullYear()} {t.footer.rights}
         </p>
       </div>
     </footer>

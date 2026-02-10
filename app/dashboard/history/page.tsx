@@ -11,34 +11,36 @@ import { getMockHistory } from "@/lib/mock";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Spinner } from "@/components/ui/spinner";
+import { useLocale } from "@/lib/i18n/locale-context";
 import { FileSearch } from "lucide-react";
-
-function getVerdictBadge(verdict: AnalysisHistoryItem["verdict"]) {
-  switch (verdict) {
-    case "ai":
-      return (
-        <Badge variant="destructive" className="text-xs">
-          AI-Generated
-        </Badge>
-      );
-    case "human":
-      return (
-        <Badge className="bg-primary/10 text-primary border-primary/30 text-xs">
-          Human
-        </Badge>
-      );
-    case "mixed":
-      return (
-        <Badge variant="outline" className="border-[hsl(var(--warning))]/30 text-[hsl(var(--warning))] text-xs">
-          Mixed
-        </Badge>
-      );
-  }
-}
 
 export default function HistoryPage() {
   const [history, setHistory] = useState<AnalysisHistoryItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const { t } = useLocale();
+
+  function getVerdictBadge(verdict: AnalysisHistoryItem["verdict"]) {
+    switch (verdict) {
+      case "ai":
+        return (
+          <Badge variant="destructive" className="text-xs">
+            {t.historyPage.aiLabel}
+          </Badge>
+        );
+      case "human":
+        return (
+          <Badge className="bg-primary/10 text-primary border-primary/30 text-xs">
+            {t.historyPage.humanLabel}
+          </Badge>
+        );
+      case "mixed":
+        return (
+          <Badge variant="outline" className="border-[hsl(var(--warning))]/30 text-[hsl(var(--warning))] text-xs">
+            {t.historyPage.mixedLabel}
+          </Badge>
+        );
+    }
+  }
 
   useEffect(() => {
     // TODO: Replace with apiClient.getAnalysisHistory() when backend is ready

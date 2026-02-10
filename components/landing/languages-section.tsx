@@ -1,36 +1,40 @@
+"use client";
+
 /**
  * Landing page section highlighting supported languages.
  */
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-
-const LANGUAGES = [
-  {
-    code: "RU",
-    name: "Russian",
-    description: "Full support for Russian language detection with a dedicated corpus of 500K+ samples.",
-    status: "Stable",
-  },
-  {
-    code: "KK",
-    name: "Kazakh",
-    description: "Specialized Kazakh language model trained on academic and web text corpora.",
-    status: "Stable",
-  },
-] as const;
+import { useLocale } from "@/lib/i18n/locale-context";
 
 export function LanguagesSection() {
+  const { t } = useLocale();
+
+  const LANGUAGES = [
+    {
+      code: "RU",
+      name: t.languagesSection.russian,
+      description: t.languagesSection.russianDesc,
+      status: t.languagesSection.stable,
+    },
+    {
+      code: "KK",
+      name: t.languagesSection.kazakh,
+      description: t.languagesSection.kazakhDesc,
+      status: t.languagesSection.stable,
+    },
+  ];
+
   return (
     <section id="languages" className="px-6 py-24">
       <div className="mx-auto max-w-7xl">
         <div className="text-center">
           <h2 className="text-balance text-3xl font-bold text-foreground sm:text-4xl">
-            Multilingual detection
+            {t.languagesSection.title}
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-pretty text-muted-foreground">
-            Purpose-built models for Russian and Kazakh language corpora,
-            with English support included.
+            {t.languagesSection.subtitle}
           </p>
         </div>
 

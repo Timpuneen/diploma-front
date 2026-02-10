@@ -9,6 +9,8 @@ import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/auth-context";
 import { ROUTES } from "@/lib/constants";
+import { useLocale } from "@/lib/i18n/locale-context";
+import { LanguageSwitcher } from "@/components/language-switcher";
 import { Button } from "@/components/ui/button";
 import {
   Shield,
@@ -18,16 +20,17 @@ import {
   LogOut,
 } from "lucide-react";
 
-const NAV_ITEMS = [
-  { href: ROUTES.ANALYZE, label: "Analyze Text", icon: FileSearch },
-  { href: ROUTES.HISTORY, label: "History", icon: History },
-  { href: ROUTES.PROFILE, label: "Profile", icon: UserCircle },
-] as const;
-
 export function DashboardSidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const { user, logout } = useAuth();
+  const { t } = useLocale();
+
+  const NAV_ITEMS = [
+    { href: ROUTES.ANALYZE, label: t.sidebar.analyzeText, icon: FileSearch },
+    { href: ROUTES.HISTORY, label: t.sidebar.history, icon: History },
+    { href: ROUTES.PROFILE, label: t.sidebar.profile, icon: UserCircle },
+  ];
 
   async function handleLogout() {
     await logout();
@@ -77,13 +80,16 @@ export function DashboardSidebar() {
             </p>
           </div>
         )}
+        <div className="flex items-center gap-2 px-3 mb-3">
+          <LanguageSwitcher variant="outline" />
+        </div>
         <Button
           variant="ghost"
           className="w-full justify-start gap-3 text-muted-foreground hover:text-foreground"
           onClick={handleLogout}
         >
           <LogOut className="h-4 w-4" />
-          Sign Out
+          {t.sidebar.signOut}
         </Button>
       </div>
     </aside>
