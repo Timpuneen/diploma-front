@@ -9,6 +9,7 @@ import React from "react"
 
 import { useState } from "react";
 import { useAuth } from "@/lib/auth-context";
+import { useLanguage } from "@/lib/language-context";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,6 +20,7 @@ import { Loader2, UserCircle, Mail, Calendar, Shield } from "lucide-react";
 
 export default function ProfilePage() {
   const { user, updateUser } = useAuth();
+  const { t } = useLanguage();
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [name, setName] = useState(user?.name ?? "");
@@ -28,11 +30,11 @@ export default function ProfilePage() {
     e.preventDefault();
 
     if (!name.trim()) {
-      toast.error("Name cannot be empty");
+      toast.error(t("profileNameEmpty"));
       return;
     }
     if (!email.trim()) {
-      toast.error("Email cannot be empty");
+      toast.error(t("profileEmailEmpty"));
       return;
     }
 
@@ -42,9 +44,9 @@ export default function ProfilePage() {
       await new Promise((resolve) => setTimeout(resolve, 600));
       updateUser({ name, email });
       setIsEditing(false);
-      toast.success("Profile updated successfully");
+      toast.success(t("profileUpdateSuccess"));
     } catch {
-      toast.error("Failed to update profile");
+      toast.error(t("profileUpdateFailed"));
     } finally {
       setIsSaving(false);
     }
@@ -61,9 +63,9 @@ export default function ProfilePage() {
   return (
     <div className="mx-auto max-w-2xl px-6 py-8">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-foreground">Profile</h1>
+        <h1 className="text-2xl font-bold text-foreground">{t("profileTitle")}</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Manage your account settings
+          {t("profileSubtitle")}
         </p>
       </div>
 
@@ -86,14 +88,14 @@ export default function ProfilePage() {
         {/* Editable profile form */}
         <Card className="border-border/50">
           <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="text-base">Personal Information</CardTitle>
+            <CardTitle className="text-base">{t("profilePersonalInfo")}</CardTitle>
             {!isEditing && (
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => setIsEditing(true)}
               >
-                Edit
+                {t("profileEdit")}
               </Button>
             )}
           </CardHeader>
@@ -101,7 +103,7 @@ export default function ProfilePage() {
             {isEditing ? (
               <form onSubmit={handleSave} className="flex flex-col gap-4">
                 <div className="flex flex-col gap-2">
-                  <Label htmlFor="profile-name">Full Name</Label>
+                  <Label htmlFor="profile-name">{t("profileFullName")}</Label>
                   <Input
                     id="profile-name"
                     value={name}
@@ -110,7 +112,7 @@ export default function ProfilePage() {
                   />
                 </div>
                 <div className="flex flex-col gap-2">
-                  <Label htmlFor="profile-email">Email</Label>
+                  <Label htmlFor="profile-email">{t("profileEmail")}</Label>
                   <Input
                     id="profile-email"
                     type="email"
@@ -124,10 +126,10 @@ export default function ProfilePage() {
                     {isSaving ? (
                       <>
                         <Loader2 className="h-4 w-4 animate-spin" />
-                        Saving...
+                        {t("profileSaving")}
                       </>
                     ) : (
-                      "Save Changes"
+                      t("profileSave")
                     )}
                   </Button>
                   <Button
@@ -135,20 +137,20 @@ export default function ProfilePage() {
                     variant="ghost"
                     onClick={handleCancel}
                   >
-                    Cancel
+                    {t("profileCancel")}
                   </Button>
                 </div>
               </form>
             ) : (
               <div className="flex flex-col gap-4">
-                <InfoRow icon={UserCircle} label="Name" value={user.name} />
+                <InfoRow icon={UserCircle} label={t("profileName")} value={user.name} />
                 <Separator />
-                <InfoRow icon={Mail} label="Email" value={user.email} />
+                <InfoRow icon={Mail} label={t("profileEmail")} value={user.email} />
                 <Separator />
                 <InfoRow
                   icon={Calendar}
-                  label="Member since"
-                  value={new Date(user.createdAt).toLocaleDateString("en-US", {
+                  label={t("profileMemberSince")}
+                  value={new Date(user.createdAt).toLocaleDateString("ru-RU", {
                     year: "numeric",
                     month: "long",
                     day: "numeric",
@@ -162,7 +164,7 @@ export default function ProfilePage() {
         {/* Account section */}
         <Card className="border-border/50">
           <CardHeader>
-            <CardTitle className="text-base">Security</CardTitle>
+            <CardTitle className="text-base">{t("profileSecurity")}</CardTitle>
           </CardHeader>
           <CardContent className="flex flex-col gap-4">
             <div className="flex items-center justify-between">
@@ -170,15 +172,15 @@ export default function ProfilePage() {
                 <Shield className="h-4 w-4 text-muted-foreground" />
                 <div>
                   <p className="text-sm font-medium text-foreground">
-                    Password
+                    {t("profilePassword")}
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    Last changed 30 days ago
+                    {t("profilePasswordLastChanged")}
                   </p>
                 </div>
               </div>
               <Button variant="outline" size="sm">
-                Change
+                {t("profilePasswordChange")}
               </Button>
             </div>
           </CardContent>

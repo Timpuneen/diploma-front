@@ -94,7 +94,7 @@ export function AnalysisResults({ result, onReset }: AnalysisResultsProps) {
         <Card className="border-border/50">
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center justify-between text-sm">
-              <span>AI Probability</span>
+              <span>{t("resultAiProbability")}</span>
               <span className="text-destructive">{result.aiProbability}%</span>
             </CardTitle>
           </CardHeader>
@@ -109,7 +109,7 @@ export function AnalysisResults({ result, onReset }: AnalysisResultsProps) {
         <Card className="border-border/50">
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center justify-between text-sm">
-              <span>Human Probability</span>
+              <span>{t("resultHumanProbability")}</span>
               <span className="text-primary">{result.humanProbability}%</span>
             </CardTitle>
           </CardHeader>
@@ -125,33 +125,33 @@ export function AnalysisResults({ result, onReset }: AnalysisResultsProps) {
       {/* Detailed metrics */}
       <Card className="border-border/50">
         <CardHeader>
-          <CardTitle className="text-base">Detailed Metrics</CardTitle>
+          <CardTitle className="text-base">{t("resultDetailedMetrics")}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <MetricCard
               icon={Brain}
-              label="Perplexity"
+              label={t("resultPerplexity")}
               value={result.metrics.perplexity.toFixed(1)}
-              description="Language model surprise score"
+              description={t("resultPerplexityDesc")}
             />
             <MetricCard
               icon={Activity}
-              label="Burstiness"
+              label={t("resultBurstiness")}
               value={result.metrics.burstiness.toFixed(2)}
-              description="Sentence length variation"
+              description={t("resultBurstinessDesc")}
             />
             <MetricCard
               icon={Waves}
-              label="Entropy"
+              label={t("resultEntropy")}
               value={result.metrics.entropy.toFixed(2)}
-              description="Information density"
+              description={t("resultEntropyDesc")}
             />
             <MetricCard
               icon={Repeat}
-              label="Repetitiveness"
+              label={t("resultRepetitiveness")}
               value={result.metrics.repetitiveness.toFixed(2)}
-              description="Pattern repetition score"
+              description={t("resultRepetitivenessDesc")}
             />
           </div>
         </CardContent>
@@ -160,7 +160,7 @@ export function AnalysisResults({ result, onReset }: AnalysisResultsProps) {
       {/* Analyzed text preview */}
       <Card className="border-border/50">
         <CardHeader>
-          <CardTitle className="text-base">Analyzed Text</CardTitle>
+          <CardTitle className="text-base">{t("resultAnalyzedText")}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="max-h-48 overflow-y-auto rounded-lg bg-background p-4">
@@ -175,7 +175,7 @@ export function AnalysisResults({ result, onReset }: AnalysisResultsProps) {
 
       <Button onClick={onReset} variant="outline" className="gap-2 self-center bg-transparent">
         <RotateCcw className="h-4 w-4" />
-        Analyze Another Text
+        {t("resultAnalyzeAnother")}
       </Button>
     </div>
   );

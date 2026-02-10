@@ -104,7 +104,7 @@ export function TextInputForm({
         </div>
         <div className="w-40">
           <Label htmlFor="language-select" className="sr-only">
-            Language
+            {t("langSwitcherLabel")}
           </Label>
           <Select value={language} onValueChange={setLanguage}>
             <SelectTrigger id="language-select">
