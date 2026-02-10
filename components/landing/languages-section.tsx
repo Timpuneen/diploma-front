@@ -1,47 +1,30 @@
+"use client";
+
 /**
  * Landing page section highlighting supported languages.
  */
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-
-const LANGUAGES = [
-  {
-    code: "RU",
-    name: "Russian",
-    description: "Full support for Russian language detection with a dedicated corpus of 500K+ samples.",
-    status: "Stable",
-  },
-  {
-    code: "KK",
-    name: "Kazakh",
-    description: "Specialized Kazakh language model trained on academic and web text corpora.",
-    status: "Stable",
-  },
-  {
-    code: "EN",
-    name: "English",
-    description: "Comprehensive English detection with broad training data coverage.",
-    status: "Stable",
-  },
-] as const;
+import { useI18n } from "@/lib/i18n";
 
 export function LanguagesSection() {
+  const { t } = useI18n();
+
   return (
     <section id="languages" className="px-6 py-24">
       <div className="mx-auto max-w-7xl">
         <div className="text-center">
           <h2 className="text-balance text-3xl font-bold text-foreground sm:text-4xl">
-            Multilingual detection
+            {t.languagesSection.heading}
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-pretty text-muted-foreground">
-            Purpose-built models for Russian and Kazakh language corpora,
-            with English support included.
+            {t.languagesSection.subheading}
           </p>
         </div>
 
         <div className="mt-16 grid gap-6 md:grid-cols-3">
-          {LANGUAGES.map((lang) => (
+          {t.languagesSection.items.map((lang) => (
             <Card
               key={lang.code}
               className="border-border/50 bg-card transition-colors hover:border-primary/30"
