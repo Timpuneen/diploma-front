@@ -11,11 +11,13 @@ import { generateMockAnalysis, simulateDelay } from "@/lib/mock";
 import { TextInputForm } from "@/components/dashboard/text-input-form";
 import { AnalysisProgress } from "@/components/dashboard/analysis-progress";
 import { AnalysisResults } from "@/components/dashboard/analysis-results";
+import { useLocale } from "@/lib/i18n/locale-context";
 import { toast } from "sonner";
 
 export default function AnalyzePage() {
   const [status, setStatus] = useState<AnalysisStatus>("idle");
   const [result, setResult] = useState<AnalysisResult | null>(null);
+  const { t } = useLocale();
 
   const handleAnalyze = useCallback(async (text: string, _language: string) => {
     setStatus("analyzing");
@@ -26,10 +28,10 @@ export default function AnalyzePage() {
       setResult(analysisResult);
       setStatus("complete");
     } catch {
-      toast.error("Analysis failed. Please try again.");
+      toast.error(t.analyze.analysisFailed);
       setStatus("error");
     }
-  }, []);
+  }, [t]);
 
   const handleFileAnalyze = useCallback(async (file: File, _language: string) => {
     setStatus("uploading");
@@ -41,10 +43,10 @@ export default function AnalyzePage() {
       setResult(analysisResult);
       setStatus("complete");
     } catch {
-      toast.error("File analysis failed. Please try again.");
+      toast.error(t.analyze.fileFailed);
       setStatus("error");
     }
-  }, []);
+  }, [t]);
 
   function handleReset() {
     setStatus("idle");
@@ -54,9 +56,9 @@ export default function AnalyzePage() {
   return (
     <div className="mx-auto max-w-4xl px-6 py-8">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-foreground">Analyze Text</h1>
+        <h1 className="text-2xl font-bold text-foreground">{t.analyze.title}</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Submit text or upload a file to check for AI-generated content
+          {t.analyze.subtitle}
         </p>
       </div>
 

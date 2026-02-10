@@ -6,20 +6,14 @@
 
 import { useEffect, useState } from "react";
 import { Progress } from "@/components/ui/progress";
+import { useLocale } from "@/lib/i18n/locale-context";
 import { Loader2 } from "lucide-react";
-
-const STEPS = [
-  "Preprocessing text...",
-  "Computing perplexity scores...",
-  "Analyzing burstiness patterns...",
-  "Calculating entropy metrics...",
-  "Running classification model...",
-  "Generating results...",
-] as const;
 
 export function AnalysisProgress() {
   const [progress, setProgress] = useState(0);
   const [stepIndex, setStepIndex] = useState(0);
+  const { t } = useLocale();
+  const STEPS = t.progress.steps;
 
   useEffect(() => {
     const interval = setInterval(() => {

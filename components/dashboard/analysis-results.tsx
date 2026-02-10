@@ -11,6 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import { useLocale } from "@/lib/i18n/locale-context";
 import {
   AlertTriangle,
   CheckCircle,
@@ -27,37 +28,39 @@ interface AnalysisResultsProps {
   onReset: () => void;
 }
 
-/** Returns verdict-specific color class and icon. */
-function getVerdictConfig(verdict: AnalysisResult["verdict"]) {
-  switch (verdict) {
-    case "ai":
-      return {
-        label: "AI-Generated",
-        color: "text-destructive",
-        bgColor: "bg-destructive/10",
-        borderColor: "border-destructive/30",
-        icon: AlertTriangle,
-      };
-    case "human":
-      return {
-        label: "Human-Written",
-        color: "text-primary",
-        bgColor: "bg-primary/10",
-        borderColor: "border-primary/30",
-        icon: CheckCircle,
-      };
-    case "mixed":
-      return {
-        label: "Mixed Content",
-        color: "text-[hsl(var(--warning))]",
-        bgColor: "bg-[hsl(var(--warning))]/10",
-        borderColor: "border-[hsl(var(--warning))]/30",
-        icon: HelpCircle,
-      };
-  }
-}
-
 export function AnalysisResults({ result, onReset }: AnalysisResultsProps) {
+  const { t } = useLocale();
+
+  /** Returns verdict-specific color class and icon. */
+  function getVerdictConfig(v: AnalysisResult["verdict"]) {
+    switch (v) {
+      case "ai":
+        return {
+          label: t.results.aiGenerated,
+          color: "text-destructive",
+          bgColor: "bg-destructive/10",
+          borderColor: "border-destructive/30",
+          icon: AlertTriangle,
+        };
+      case "human":
+        return {
+          label: t.results.humanWritten,
+          color: "text-primary",
+          bgColor: "bg-primary/10",
+          borderColor: "border-primary/30",
+          icon: CheckCircle,
+        };
+      case "mixed":
+        return {
+          label: t.results.mixedContent,
+          color: "text-[hsl(var(--warning))]",
+          bgColor: "bg-[hsl(var(--warning))]/10",
+          borderColor: "border-[hsl(var(--warning))]/30",
+          icon: HelpCircle,
+        };
+    }
+  }
+
   const verdict = getVerdictConfig(result.verdict);
   const VerdictIcon = verdict.icon;
 
@@ -77,12 +80,12 @@ export function AnalysisResults({ result, onReset }: AnalysisResultsProps) {
                 {verdict.label}
               </h2>
               <p className="text-sm text-muted-foreground">
-                {result.wordCount} words analyzed
+                {result.wordCount} {t.results.wordsAnalyzed}
               </p>
             </div>
           </div>
           <Badge variant="outline" className={`${verdict.borderColor} ${verdict.color}`}>
-            {result.aiProbability}% AI Probability
+            {result.aiProbability}% {t.results.aiProbability}
           </Badge>
         </CardContent>
       </Card>
@@ -92,7 +95,7 @@ export function AnalysisResults({ result, onReset }: AnalysisResultsProps) {
         <Card className="border-border/50">
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center justify-between text-sm">
-              <span>AI Probability</span>
+              <span>{t.results.aiProbability}</span>
               <span className="text-destructive">{result.aiProbability}%</span>
             </CardTitle>
           </CardHeader>
@@ -107,7 +110,7 @@ export function AnalysisResults({ result, onReset }: AnalysisResultsProps) {
         <Card className="border-border/50">
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center justify-between text-sm">
-              <span>Human Probability</span>
+              <span>{t.results.humanProbability}</span>
               <span className="text-primary">{result.humanProbability}%</span>
             </CardTitle>
           </CardHeader>
@@ -123,33 +126,33 @@ export function AnalysisResults({ result, onReset }: AnalysisResultsProps) {
       {/* Detailed metrics */}
       <Card className="border-border/50">
         <CardHeader>
-          <CardTitle className="text-base">Detailed Metrics</CardTitle>
+          <CardTitle className="text-base">{t.results.detailedMetrics}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <MetricCard
               icon={Brain}
-              label="Perplexity"
+              label={t.results.perplexity}
               value={result.metrics.perplexity.toFixed(1)}
-              description="Language model surprise score"
+              description={t.results.perplexityDesc}
             />
             <MetricCard
               icon={Activity}
-              label="Burstiness"
+              label={t.results.burstiness}
               value={result.metrics.burstiness.toFixed(2)}
-              description="Sentence length variation"
+              description={t.results.burstinessDesc}
             />
             <MetricCard
               icon={Waves}
-              label="Entropy"
+              label={t.results.entropy}
               value={result.metrics.entropy.toFixed(2)}
-              description="Information density"
+              description={t.results.entropyDesc}
             />
             <MetricCard
               icon={Repeat}
-              label="Repetitiveness"
+              label={t.results.repetitiveness}
               value={result.metrics.repetitiveness.toFixed(2)}
-              description="Pattern repetition score"
+              description={t.results.repetitivenessDesc}
             />
           </div>
         </CardContent>
@@ -158,7 +161,7 @@ export function AnalysisResults({ result, onReset }: AnalysisResultsProps) {
       {/* Analyzed text preview */}
       <Card className="border-border/50">
         <CardHeader>
-          <CardTitle className="text-base">Analyzed Text</CardTitle>
+          <CardTitle className="text-base">{t.results.analyzedText}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="max-h-48 overflow-y-auto rounded-lg bg-background p-4">
@@ -173,7 +176,7 @@ export function AnalysisResults({ result, onReset }: AnalysisResultsProps) {
 
       <Button onClick={onReset} variant="outline" className="gap-2 self-center bg-transparent">
         <RotateCcw className="h-4 w-4" />
-        Analyze Another Text
+        {t.results.analyzeAnother}
       </Button>
     </div>
   );

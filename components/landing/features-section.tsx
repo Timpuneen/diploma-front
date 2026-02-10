@@ -1,8 +1,11 @@
+"use client";
+
 /**
  * Landing page features grid showcasing core capabilities.
  */
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useLocale } from "@/lib/i18n/locale-context";
 import {
   Brain,
   FileText,
@@ -11,57 +14,53 @@ import {
   Zap,
   Lock,
 } from "lucide-react";
-
-const FEATURES = [
-  {
-    icon: Brain,
-    title: "Deep NLP Analysis",
-    description:
-      "Advanced natural language processing models trained on multilingual corpora for accurate AI text detection.",
-  },
-  {
-    icon: Globe,
-    title: "Multilingual Support",
-    description:
-      "Specialized support for Russian, Kazakh, and English languages with corpus-specific tuning.",
-  },
-  {
-    icon: FileText,
-    title: "Multiple Formats",
-    description:
-      "Upload plain text, PDF, or DOCX files for seamless analysis without manual copy-pasting.",
-  },
-  {
-    icon: BarChart3,
-    title: "Detailed Metrics",
-    description:
-      "Get perplexity, burstiness, entropy, and repetitiveness scores alongside the final verdict.",
-  },
-  {
-    icon: Zap,
-    title: "Fast Processing",
-    description:
-      "Results delivered in under 2 seconds with real-time progress tracking during analysis.",
-  },
-  {
-    icon: Lock,
-    title: "Secure & Private",
-    description:
-      "Your texts are processed securely and never stored permanently. Full data privacy guaranteed.",
-  },
-] as const;
+import type { ElementType } from "react";
 
 export function FeaturesSection() {
+  const { t } = useLocale();
+
+  const FEATURES: { icon: ElementType; title: string; description: string }[] = [
+    {
+      icon: Brain,
+      title: t.features.deepNlp,
+      description: t.features.deepNlpDesc,
+    },
+    {
+      icon: Globe,
+      title: t.features.multilingual,
+      description: t.features.multilingualDesc,
+    },
+    {
+      icon: FileText,
+      title: t.features.multipleFormats,
+      description: t.features.multipleFormatsDesc,
+    },
+    {
+      icon: BarChart3,
+      title: t.features.detailedMetrics,
+      description: t.features.detailedMetricsDesc,
+    },
+    {
+      icon: Zap,
+      title: t.features.fastProcessing,
+      description: t.features.fastProcessingDesc,
+    },
+    {
+      icon: Lock,
+      title: t.features.securePrivate,
+      description: t.features.securePrivateDesc,
+    },
+  ];
+
   return (
     <section id="features" className="px-6 py-24">
       <div className="mx-auto max-w-7xl">
         <div className="text-center">
           <h2 className="text-balance text-3xl font-bold text-foreground sm:text-4xl">
-            Powerful detection capabilities
+            {t.features.title}
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-pretty text-muted-foreground">
-            Built with state-of-the-art machine learning techniques to
-            provide reliable AI text detection across multiple languages.
+            {t.features.subtitle}
           </p>
         </div>
 

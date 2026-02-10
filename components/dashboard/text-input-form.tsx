@@ -25,8 +25,8 @@ import {
   MAX_FILE_SIZE_MB,
   MAX_FILE_SIZE_BYTES,
   ACCEPTED_FILE_EXTENSIONS,
-  SUPPORTED_LANGUAGES,
 } from "@/lib/constants";
+import { useLocale } from "@/lib/i18n/locale-context";
 import { toast } from "sonner";
 import { Upload, FileText, Loader2, X } from "lucide-react";
 
@@ -45,6 +45,7 @@ export function TextInputForm({
   const [language, setLanguage] = useState("auto");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { t } = useLocale();
 
   const wordCount = text.trim() ? text.trim().split(/\s+/).length : 0;
   const charCount = text.length;
@@ -52,11 +53,11 @@ export function TextInputForm({
   function handleTextSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (text.length < MIN_TEXT_LENGTH) {
-      toast.error(`Text must be at least ${MIN_TEXT_LENGTH} characters`);
+      toast.error(`${t.analyze.textTooShort} ${MIN_TEXT_LENGTH} ${t.analyze.chars}`);
       return;
     }
     if (text.length > MAX_TEXT_LENGTH) {
-      toast.error(`Text must not exceed ${MAX_TEXT_LENGTH} characters`);
+      toast.error(`${t.analyze.textTooLong} ${MAX_TEXT_LENGTH.toLocaleString()} ${t.analyze.chars}`);
       return;
     }
     onAnalyze(text, language);
@@ -65,7 +66,7 @@ export function TextInputForm({
   function handleFileSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!selectedFile) {
-      toast.error("Please select a file");
+      toast.error(t.analyze.selectFile);
       return;
     }
     onFileAnalyze(selectedFile, language);
@@ -79,7 +80,7 @@ export function TextInputForm({
 
   function validateAndSetFile(file: File) {
     if (file.size > MAX_FILE_SIZE_BYTES) {
-      toast.error(`File size must not exceed ${MAX_FILE_SIZE_MB}MB`);
+      toast.error(`${t.analyze.fileTooLarge} ${MAX_FILE_SIZE_MB}MB`);
       return;
     }
     setSelectedFile(file);
@@ -95,26 +96,25 @@ export function TextInputForm({
       <div className="mb-6 flex items-center justify-between">
         <div>
           <h2 className="text-lg font-semibold text-foreground">
-            Text Analysis
+            {t.analyze.textAnalysis}
           </h2>
           <p className="mt-1 text-sm text-muted-foreground">
-            Paste text or upload a file to detect AI-generated content
+            {t.analyze.textAnalysisDesc}
           </p>
         </div>
         <div className="w-40">
           <Label htmlFor="language-select" className="sr-only">
-            Language
+            {t.analyze.language}
           </Label>
           <Select value={language} onValueChange={setLanguage}>
             <SelectTrigger id="language-select">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              {SUPPORTED_LANGUAGES.map((lang) => (
-                <SelectItem key={lang.value} value={lang.value}>
-                  {lang.label}
-                </SelectItem>
-              ))}
+              <SelectItem value="auto">{t.analyze.autoDetect}</SelectItem>
+              <SelectItem value="ru">{t.analyze.russian}</SelectItem>
+              <SelectItem value="kk">{t.analyze.kazakh}</SelectItem>
+              <SelectItem value="en">{t.analyze.english}</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -124,11 +124,11 @@ export function TextInputForm({
         <TabsList className="mb-4">
           <TabsTrigger value="text" className="gap-2">
             <FileText className="h-3.5 w-3.5" />
-            Paste Text
+            {t.analyze.pasteText}
           </TabsTrigger>
           <TabsTrigger value="file" className="gap-2">
             <Upload className="h-3.5 w-3.5" />
-            Upload File
+            {t.analyze.uploadFile}
           </TabsTrigger>
         </TabsList>
 
@@ -136,7 +136,7 @@ export function TextInputForm({
           <form onSubmit={handleTextSubmit} className="flex flex-col gap-4">
             <div className="relative">
               <Textarea
-                placeholder="Paste your text here for analysis..."
+                placeholder={t.analyze.textPlaceholder}
                 value={text}
                 onChange={(e) => setText(e.target.value)}
                 className="min-h-[240px] resize-y bg-background text-sm leading-relaxed"
@@ -144,11 +144,11 @@ export function TextInputForm({
               />
               <div className="mt-2 flex items-center justify-between text-xs text-muted-foreground">
                 <span>
-                  {wordCount} words / {charCount} characters
+                  {wordCount} {t.analyze.words} / {charCount} {t.analyze.characters}
                 </span>
                 <span>
-                  Min {MIN_TEXT_LENGTH} chars, max{" "}
-                  {MAX_TEXT_LENGTH.toLocaleString()} chars
+                  {t.analyze.minChars} {MIN_TEXT_LENGTH} {t.analyze.chars}, {t.analyze.maxChars}{" "}
+                  {MAX_TEXT_LENGTH.toLocaleString()} {t.analyze.chars}
                 </span>
               </div>
             </div>
@@ -160,10 +160,10 @@ export function TextInputForm({
               {isAnalyzing ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin" />
-                  Analyzing...
+                  {t.analyze.analyzing}
                 </>
               ) : (
-                "Analyze Text"
+                t.analyze.analyzeTextBtn
               )}
             </Button>
           </form>
@@ -214,7 +214,7 @@ export function TextInputForm({
                     className="gap-1 text-muted-foreground"
                   >
                     <X className="h-3 w-3" />
-                    Remove
+                    {t.analyze.remove}
                   </Button>
                 </div>
               ) : (
@@ -222,10 +222,10 @@ export function TextInputForm({
                   <Upload className="h-10 w-10 text-muted-foreground" />
                   <div className="text-center">
                     <p className="text-sm font-medium text-foreground">
-                      Drop a file here or click to browse
+                      {t.analyze.dropFile}
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      TXT, PDF, or DOCX up to {MAX_FILE_SIZE_MB}MB
+                      {t.analyze.fileTypes} {MAX_FILE_SIZE_MB}MB
                     </p>
                   </div>
                 </div>
@@ -239,10 +239,10 @@ export function TextInputForm({
               {isAnalyzing ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin" />
-                  Analyzing...
+                  {t.analyze.analyzing}
                 </>
               ) : (
-                "Analyze File"
+                t.analyze.analyzeFile
               )}
             </Button>
           </form>
