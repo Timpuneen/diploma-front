@@ -8,7 +8,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ROUTES } from "@/lib/constants";
-import { useAuth } from "@/lib/auth-context";
+import { useOptionalAuth } from "@/lib/auth-context";
 import { useLocale } from "@/lib/i18n/locale-context";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { Menu, X, Shield } from "lucide-react";
@@ -16,7 +16,8 @@ import { Menu, X, Shield } from "lucide-react";
 export function Navbar() {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const { t } = useLocale();
-  const { isAuthenticated } = useAuth();
+  const auth = useOptionalAuth();
+  const isAuthenticated = auth?.isAuthenticated ?? false;
 
   const NAV_LINKS = [
     { href: "#features", label: t.nav.features },

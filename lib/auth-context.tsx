@@ -42,6 +42,11 @@ export function useAuth(): AuthContextValue {
   return context;
 }
 
+/** Safe hook that returns null when used outside AuthProvider. */
+export function useOptionalAuth(): AuthContextValue | null {
+  return useContext(AuthContext);
+}
+
 interface AuthProviderProps {
   children: ReactNode;
 }
