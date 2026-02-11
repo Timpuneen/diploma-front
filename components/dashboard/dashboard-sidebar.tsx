@@ -80,17 +80,17 @@ export function DashboardSidebar() {
             </p>
           </div>
         )}
-        <div className="flex items-center gap-2 px-3 mb-3">
-          <LanguageSwitcher variant="ghost" />
+        <div className="flex items-center gap-2">
+          <Button
+            variant="ghost"
+            className="flex-1 justify-start gap-3 text-muted-foreground hover:text-foreground"
+            onClick={handleLogout}
+          >
+            <LogOut className="h-4 w-4" />
+            {t.sidebar.signOut}
+          </Button>
+          <LanguageSwitcher variant="ghost" className="text-muted-foreground hover:text-foreground" />
         </div>
-        <Button
-          variant="ghost"
-          className="w-full justify-start gap-3 text-muted-foreground hover:text-foreground"
-          onClick={handleLogout}
-        >
-          <LogOut className="h-4 w-4" />
-          {t.sidebar.signOut}
-        </Button>
       </div>
     </aside>
   );

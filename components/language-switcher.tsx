@@ -4,6 +4,7 @@
  * Language switcher dropdown for selecting between Russian and Kazakh.
  */
 
+import { cn } from "@/lib/utils";
 import { useLocale, type Locale } from "@/lib/i18n/locale-context";
 import { Button } from "@/components/ui/button";
 import {
@@ -19,13 +20,13 @@ const LOCALE_OPTIONS: { value: Locale; label: string; flag: string }[] = [
   { value: "kk", label: "Қазақша", flag: "KZ" },
 ];
 
-export function LanguageSwitcher({ variant = "ghost" }: { variant?: "ghost" | "outline" }) {
+export function LanguageSwitcher({ variant = "ghost", className }: { variant?: "ghost" | "outline"; className?: string }) {
   const { locale, setLocale } = useLocale();
 
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
-        <Button variant={variant} size="sm" className="gap-2">
+        <Button variant={variant} size="sm" className={cn("gap-2", className)}>
           <Languages className="h-4 w-4" />
           <span className="text-xs font-medium">
             {locale === "ru" ? "RU" : "KZ"}
