@@ -39,12 +39,12 @@ export function DashboardSidebar() {
 
   return (
     <aside className="flex h-screen w-64 flex-col border-r border-border/50 bg-card">
-      <div className="flex items-center gap-2 border-b border-border/50 px-6 py-5">
+      <Link href={ROUTES.HOME} className="flex items-center gap-2 border-b border-border/50 px-6 py-5">
         <Shield className="h-6 w-6 text-primary" />
         <span className="text-lg font-semibold text-foreground">
           AI Detector
         </span>
-      </div>
+      </Link>
 
       <nav className="flex-1 px-3 py-4">
         <div className="flex flex-col gap-1">
@@ -81,7 +81,7 @@ export function DashboardSidebar() {
           </div>
         )}
         <div className="flex items-center gap-2 px-3 mb-3">
-          <LanguageSwitcher variant="outline" />
+          <LanguageSwitcher variant="ghost" />
         </div>
         <Button
           variant="ghost"
