@@ -38,7 +38,7 @@ export function LanguagesSection() {
           </p>
         </div>
 
-        <div className="mt-16 grid gap-6 md:grid-cols-2">
+        <div className="mx-auto mt-16 grid max-w-3xl gap-6 md:grid-cols-2">
           {LANGUAGES.map((lang) => (
             <Card
               key={lang.code}

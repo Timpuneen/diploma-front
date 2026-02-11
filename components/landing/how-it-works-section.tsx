@@ -44,7 +44,7 @@ export function HowItWorksSection() {
           </p>
         </div>
 
-        <div className="mt-16 grid gap-8 md:grid-cols-3">
+        <div className="mx-auto mt-16 grid max-w-4xl gap-8 md:grid-cols-3">
           {STEPS.map((step, i) => (
             <div key={step.step} className="relative text-center">
               {i < STEPS.length - 1 && (

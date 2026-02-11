@@ -22,6 +22,16 @@ export function Navbar() {
     { href: "#languages", label: t.nav.languages },
   ];
 
+  const handleAnchorClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    e.preventDefault();
+    const targetId = href.replace("#", "");
+    const element = document.getElementById(targetId);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" });
+    }
+    setIsMobileOpen(false);
+  };
+
   return (
     <header className="fixed top-0 left-0 right-0 z-50 border-b border-border/50 bg-background/80 backdrop-blur-xl">
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
@@ -37,6 +47,7 @@ export function Navbar() {
             <a
               key={link.href}
               href={link.href}
+              onClick={(e) => handleAnchorClick(e, link.href)}
               className="text-sm text-muted-foreground transition-colors hover:text-foreground"
             >
               {link.label}
@@ -75,7 +86,7 @@ export function Navbar() {
                 key={link.href}
                 href={link.href}
                 className="text-sm text-muted-foreground transition-colors hover:text-foreground"
-                onClick={() => setIsMobileOpen(false)}
+                onClick={(e) => handleAnchorClick(e, link.href)}
               >
                 {link.label}
               </a>
