@@ -49,7 +49,7 @@ export function DashboardMobileHeader() {
 
   return (
     <header className="flex items-center justify-between border-b border-border/50 bg-card px-4 py-3 lg:hidden">
-      <Link href={ROUTES.ANALYZE} className="flex items-center gap-2">
+      <Link href={ROUTES.HOME} className="flex items-center gap-2">
         <Shield className="h-5 w-5 text-primary" />
         <span className="font-semibold text-foreground">AI Detector</span>
       </Link>
@@ -103,17 +103,17 @@ export function DashboardMobileHeader() {
                 </p>
               </div>
             )}
-            <div className="flex items-center gap-2 px-3 mb-3">
-              <LanguageSwitcher variant="outline" />
+            <div className="flex items-center gap-2">
+              <Button
+                variant="ghost"
+                className="flex-1 justify-start gap-3 text-muted-foreground hover:text-foreground"
+                onClick={handleLogout}
+              >
+                <LogOut className="h-4 w-4" />
+                {t.sidebar.signOut}
+              </Button>
+              <LanguageSwitcher variant="ghost" className="text-muted-foreground hover:text-foreground" />
             </div>
-            <Button
-              variant="ghost"
-              className="w-full justify-start gap-3 text-muted-foreground hover:text-foreground"
-              onClick={handleLogout}
-            >
-              <LogOut className="h-4 w-4" />
-              {t.sidebar.signOut}
-            </Button>
           </div>
         </SheetContent>
       </Sheet>

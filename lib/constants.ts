@@ -27,7 +27,6 @@ export const SUPPORTED_LANGUAGES = [
   { value: "auto", label: "Auto-detect" },
   { value: "ru", label: "Russian" },
   { value: "kk", label: "Kazakh" },
-  { value: "en", label: "English" },
 ] as const;
 
 export const ROUTES = {
