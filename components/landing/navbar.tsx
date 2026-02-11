@@ -4,20 +4,25 @@
  * Landing page navigation bar with responsive mobile menu.
  */
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ROUTES } from "@/lib/constants";
-import { useOptionalAuth } from "@/lib/auth-context";
 import { useLocale } from "@/lib/i18n/locale-context";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { Menu, X, Shield } from "lucide-react";
 
 export function Navbar() {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const { t } = useLocale();
-  const auth = useOptionalAuth();
-  const isAuthenticated = auth?.isAuthenticated ?? false;
+
+  useEffect(() => {
+    const hasToken = document.cookie
+      .split("; ")
+      .some((row) => row.startsWith("auth_token="));
+    setIsAuthenticated(hasToken);
+  }, []);
 
   const NAV_LINKS = [
     { href: "#features", label: t.nav.features },
