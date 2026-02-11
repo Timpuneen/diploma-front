@@ -4,7 +4,7 @@
  * Landing page navigation bar with responsive mobile menu.
  */
 
-import { useState, useEffect } from "react";
+import { useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ROUTES } from "@/lib/constants";
@@ -12,17 +12,20 @@ import { useLocale } from "@/lib/i18n/locale-context";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { Menu, X, Shield } from "lucide-react";
 
+function checkAuthCookie() {
+  return document.cookie.split("; ").some((row) => row.startsWith("auth_token="));
+}
+
+const subscribe = (cb: () => void) => {
+  // Re-check on focus (when user returns from login page)
+  window.addEventListener("focus", cb);
+  return () => window.removeEventListener("focus", cb);
+};
+
 export function Navbar() {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const isAuthenticated = useSyncExternalStore(subscribe, checkAuthCookie, () => false);
   const { t } = useLocale();
-
-  useEffect(() => {
-    const hasToken = document.cookie
-      .split("; ")
-      .some((row) => row.startsWith("auth_token="));
-    setIsAuthenticated(hasToken);
-  }, []);
 
   const NAV_LINKS = [
     { href: "#features", label: t.nav.features },
@@ -66,19 +69,17 @@ export function Navbar() {
         <div className="hidden items-center gap-3 md:flex">
           <LanguageSwitcher />
           {isAuthenticated ? (
-            <Button asChild>
+            <Button variant="ghost" asChild>
               <Link href={ROUTES.DASHBOARD}>{t.nav.dashboard}</Link>
             </Button>
           ) : (
-            <>
-              <Button variant="ghost" asChild>
-                <Link href={ROUTES.LOGIN}>{t.nav.signIn}</Link>
-              </Button>
-              <Button asChild>
-                <Link href={ROUTES.REGISTER}>{t.nav.getStarted}</Link>
-              </Button>
-            </>
+            <Button variant="ghost" asChild>
+              <Link href={ROUTES.LOGIN}>{t.nav.signIn}</Link>
+            </Button>
           )}
+          <Button asChild>
+            <Link href={ROUTES.REGISTER}>{t.nav.getStarted}</Link>
+          </Button>
         </div>
 
         <div className="flex items-center gap-2 md:hidden">
@@ -109,19 +110,17 @@ export function Navbar() {
             ))}
             <div className="flex flex-col gap-2 pt-2">
               {isAuthenticated ? (
-                <Button asChild>
+                <Button variant="ghost" asChild>
                   <Link href={ROUTES.DASHBOARD}>{t.nav.dashboard}</Link>
                 </Button>
               ) : (
-                <>
-                  <Button variant="ghost" asChild>
-                    <Link href={ROUTES.LOGIN}>{t.nav.signIn}</Link>
-                  </Button>
-                  <Button asChild>
-                    <Link href={ROUTES.REGISTER}>{t.nav.getStarted}</Link>
-                  </Button>
-                </>
+                <Button variant="ghost" asChild>
+                  <Link href={ROUTES.LOGIN}>{t.nav.signIn}</Link>
+                </Button>
               )}
+              <Button asChild>
+                <Link href={ROUTES.REGISTER}>{t.nav.getStarted}</Link>
+              </Button>
             </div>
           </div>
         </div>
