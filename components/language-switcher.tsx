@@ -23,7 +23,7 @@ export function LanguageSwitcher({ variant = "ghost" }: { variant?: "ghost" | "o
   const { locale, setLocale } = useLocale();
 
   return (
-    <DropdownMenu>
+    <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
         <Button variant={variant} size="sm" className="gap-2">
           <Languages className="h-4 w-4" />
