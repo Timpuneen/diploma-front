@@ -6,6 +6,7 @@ export const ru = {
     languages: "Языки",
     signIn: "Войти",
     getStarted: "Начать",
+    dashboard: "Личный кабинет",
   },
 
   // Hero section
@@ -136,7 +137,7 @@ export const ru = {
     title: "Анализ текста",
     subtitle: "Отправьте текст или загрузите файл для проверки на ИИ-генерированный контент",
     textAnalysis: "Анализ текста",
-    textAnalysisDesc: "Вставьте текст или загрузите файл для обнаружения ИИ-контента",
+    textAnalysisDesc: "Вставьте текст или загрузит�� файл для обнаружения ИИ-контента",
     pasteText: "Вставить текст",
     uploadFile: "Загрузить файл",
     textPlaceholder: "Вставьте текст для анализа...",

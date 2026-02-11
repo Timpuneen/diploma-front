@@ -8,6 +8,7 @@ export const kk: Dictionary = {
     languages: "Тілдер",
     signIn: "Кіру",
     getStarted: "Бастау",
+    dashboard: "Жеке кабинет",
   },
 
   // Hero section
