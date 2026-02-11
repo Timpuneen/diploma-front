@@ -114,7 +114,6 @@ export function TextInputForm({
               <SelectItem value="auto">{t.analyze.autoDetect}</SelectItem>
               <SelectItem value="ru">{t.analyze.russian}</SelectItem>
               <SelectItem value="kk">{t.analyze.kazakh}</SelectItem>
-              <SelectItem value="en">{t.analyze.english}</SelectItem>
             </SelectContent>
           </Select>
         </div>
