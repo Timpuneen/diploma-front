@@ -2,12 +2,12 @@
 
 /**
  * Main text analysis page combining input form, progress, and results.
- * Uses mock analysis for demo; ready for backend integration.
+ * Connected to the FastAPI backend for AI detection.
  */
 
 import { useCallback, useState } from "react";
 import type { AnalysisResult, AnalysisStatus } from "@/lib/types";
-import { generateMockAnalysis, simulateDelay } from "@/lib/mock";
+import { apiClient } from "@/lib/api";
 import { TextInputForm } from "@/components/dashboard/text-input-form";
 import { AnalysisProgress } from "@/components/dashboard/analysis-progress";
 import { AnalysisResults } from "@/components/dashboard/analysis-results";
@@ -22,13 +22,12 @@ export default function AnalyzePage() {
   const handleAnalyze = useCallback(async (text: string, _language: string) => {
     setStatus("analyzing");
     try {
-      // TODO: Replace with apiClient.analyzeText({ text, language }) when backend is ready
-      await simulateDelay(2000);
-      const analysisResult = generateMockAnalysis(text);
+      const { result: analysisResult } = await apiClient.detectText(text);
       setResult(analysisResult);
       setStatus("complete");
-    } catch {
-      toast.error(t.analyze.analysisFailed);
+    } catch (err) {
+      const detail = (err as { detail?: string })?.detail;
+      toast.error(detail || t.analyze.analysisFailed);
       setStatus("error");
     }
   }, [t]);
@@ -36,14 +35,12 @@ export default function AnalyzePage() {
   const handleFileAnalyze = useCallback(async (file: File, _language: string) => {
     setStatus("uploading");
     try {
-      // TODO: Replace with apiClient.analyzeFile(file, language) when backend is ready
-      await simulateDelay(2500);
-      const mockText = `[Contents of ${file.name}] This is a placeholder for the extracted text from the uploaded file. In production, the backend will extract and analyze the actual file contents.`;
-      const analysisResult = generateMockAnalysis(mockText);
+      const { result: analysisResult } = await apiClient.detectFile(file);
       setResult(analysisResult);
       setStatus("complete");
-    } catch {
-      toast.error(t.analyze.fileFailed);
+    } catch (err) {
+      const detail = (err as { detail?: string })?.detail;
+      toast.error(detail || t.analyze.fileFailed);
       setStatus("error");
     }
   }, [t]);

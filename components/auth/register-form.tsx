@@ -20,7 +20,7 @@ import { toast } from "sonner";
 import { Loader2, Shield } from "lucide-react";
 
 export function RegisterForm() {
-  const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -32,7 +32,7 @@ export function RegisterForm() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
-    if (!name || !email || !password || !confirmPassword) {
+    if (!username || !email || !password || !confirmPassword) {
       toast.error(t.register.fillAll);
       return;
     }
@@ -49,7 +49,7 @@ export function RegisterForm() {
 
     setIsSubmitting(true);
     try {
-      await register({ name, email, password });
+      await register({ username, email, password });
       toast.success(t.register.success);
       router.push(ROUTES.ANALYZE);
     } catch {
@@ -76,14 +76,14 @@ export function RegisterForm() {
 
         <form onSubmit={handleSubmit} className="mt-8 flex flex-col gap-5">
           <div className="flex flex-col gap-2">
-            <Label htmlFor="name">{t.register.fullName}</Label>
+            <Label htmlFor="username">{t.register.username}</Label>
             <Input
-              id="name"
+              id="username"
               type="text"
-              placeholder={t.register.namePlaceholder}
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              autoComplete="name"
+              placeholder={t.register.usernamePlaceholder}
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              autoComplete="username"
               required
             />
           </div>

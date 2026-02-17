@@ -20,7 +20,7 @@ import { toast } from "sonner";
 import { Loader2, Shield } from "lucide-react";
 
 export function LoginForm() {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { login } = useAuth();
@@ -30,14 +30,14 @@ export function LoginForm() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
-    if (!email || !password) {
+    if (!username || !password) {
       toast.error(t.login.fillAll);
       return;
     }
 
     setIsSubmitting(true);
     try {
-      await login({ email, password });
+      await login({ username, password });
       toast.success(t.login.welcomeBack);
       router.push(ROUTES.ANALYZE);
     } catch {
@@ -64,14 +64,14 @@ export function LoginForm() {
 
         <form onSubmit={handleSubmit} className="mt-8 flex flex-col gap-5">
           <div className="flex flex-col gap-2">
-            <Label htmlFor="email">{t.login.email}</Label>
+            <Label htmlFor="username">{t.login.username}</Label>
             <Input
-              id="email"
-              type="email"
-              placeholder={t.login.emailPlaceholder}
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              autoComplete="email"
+              id="username"
+              type="text"
+              placeholder={t.login.usernamePlaceholder}
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              autoComplete="username"
               required
             />
           </div>
