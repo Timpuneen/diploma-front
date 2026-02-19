@@ -3,13 +3,15 @@
 import React from "react"
 
 /**
- * Text analysis input form with text area and file upload tabs.
+ * Text analysis input form with text area, file upload, and URL tabs.
  * Validates input and triggers analysis via callback.
  */
 
 import { useCallback, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Select,
@@ -18,7 +20,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Label } from "@/components/ui/label";
 import {
   MAX_TEXT_LENGTH,
   MIN_TEXT_LENGTH,
@@ -28,22 +29,25 @@ import {
 } from "@/lib/constants";
 import { useLocale } from "@/lib/i18n/locale-context";
 import { toast } from "sonner";
-import { Upload, FileText, Loader2, X } from "lucide-react";
+import { Upload, FileText, Loader2, X, Globe } from "lucide-react";
 
 interface TextInputFormProps {
   onAnalyze: (text: string, language: string) => void;
   onFileAnalyze: (file: File, language: string) => void;
+  onUrlAnalyze: (url: string) => void;
   isAnalyzing: boolean;
 }
 
 export function TextInputForm({
   onAnalyze,
   onFileAnalyze,
+  onUrlAnalyze,
   isAnalyzing,
 }: TextInputFormProps) {
   const [text, setText] = useState("");
   const [language, setLanguage] = useState("auto");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [url, setUrl] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { t } = useLocale();
 
@@ -70,6 +74,20 @@ export function TextInputForm({
       return;
     }
     onFileAnalyze(selectedFile, language);
+  }
+
+  function handleUrlSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    const trimmedUrl = url.trim();
+    if (!trimmedUrl) {
+      toast.error(t.analyze.urlEmpty);
+      return;
+    }
+    if (!trimmedUrl.startsWith("http://") && !trimmedUrl.startsWith("https://")) {
+      toast.error(t.analyze.urlInvalid);
+      return;
+    }
+    onUrlAnalyze(trimmedUrl);
   }
 
   const handleDrop = useCallback((e: React.DragEvent) => {
@@ -129,8 +147,13 @@ export function TextInputForm({
             <Upload className="h-3.5 w-3.5" />
             {t.analyze.uploadFile}
           </TabsTrigger>
+          <TabsTrigger value="url" className="gap-2">
+            <Globe className="h-3.5 w-3.5" />
+            {t.analyze.checkUrl}
+          </TabsTrigger>
         </TabsList>
 
+        {/* ---- Text tab ---- */}
         <TabsContent value="text">
           <form onSubmit={handleTextSubmit} className="flex flex-col gap-4">
             <div className="relative">
@@ -168,6 +191,7 @@ export function TextInputForm({
           </form>
         </TabsContent>
 
+        {/* ---- File tab ---- */}
         <TabsContent value="file">
           <form onSubmit={handleFileSubmit} className="flex flex-col gap-4">
             <div
@@ -242,6 +266,48 @@ export function TextInputForm({
                 </>
               ) : (
                 t.analyze.analyzeFile
+              )}
+            </Button>
+          </form>
+        </TabsContent>
+
+        {/* ---- URL tab ---- */}
+        <TabsContent value="url">
+          <form onSubmit={handleUrlSubmit} className="flex flex-col gap-4">
+            <div className="flex min-h-[240px] flex-col justify-center gap-4 rounded-lg border-2 border-dashed border-border/50 bg-background p-6">
+              <div className="flex flex-col items-center gap-3">
+                <Globe className="h-10 w-10 text-muted-foreground" />
+                <div className="text-center">
+                  <p className="text-sm font-medium text-foreground">
+                    {t.analyze.urlLabel}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {t.analyze.urlHint}
+                  </p>
+                </div>
+              </div>
+              <div className="mx-auto w-full max-w-lg">
+                <Input
+                  type="url"
+                  placeholder={t.analyze.urlPlaceholder}
+                  value={url}
+                  onChange={(e) => setUrl(e.target.value)}
+                  className="bg-card"
+                />
+              </div>
+            </div>
+            <Button
+              type="submit"
+              disabled={isAnalyzing || !url.trim()}
+              className="self-end gap-2"
+            >
+              {isAnalyzing ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  {t.analyze.analyzing}
+                </>
+              ) : (
+                t.analyze.analyzeUrl
               )}
             </Button>
           </form>

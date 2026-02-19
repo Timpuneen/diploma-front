@@ -142,8 +142,14 @@ export interface ApiResponse<T> {
   message?: string;
 }
 
+export interface ValidationErrorItem {
+  loc: string[];
+  msg: string;
+  type: string;
+}
+
 export interface ApiError {
-  detail: string;
+  detail: string | ValidationErrorItem[];
   error_type?: string;
 }
 

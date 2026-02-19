@@ -5,7 +5,6 @@
  */
 
 import type { ReactNode } from "react";
-import { AuthProvider } from "@/lib/auth-context";
 import { AuthGuard } from "@/components/auth-guard";
 import { DashboardSidebar } from "@/components/dashboard/dashboard-sidebar";
 import { DashboardMobileHeader } from "@/components/dashboard/dashboard-mobile-header";
@@ -16,18 +15,16 @@ interface DashboardLayoutProps {
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
   return (
-    <AuthProvider>
-      <AuthGuard>
-        <div className="flex h-screen">
-          <div className="hidden lg:block">
-            <DashboardSidebar />
-          </div>
-          <div className="flex flex-1 flex-col overflow-hidden">
-            <DashboardMobileHeader />
-            <main className="flex-1 overflow-y-auto">{children}</main>
-          </div>
+    <AuthGuard>
+      <div className="flex h-screen">
+        <div className="hidden lg:block">
+          <DashboardSidebar />
         </div>
-      </AuthGuard>
-    </AuthProvider>
+        <div className="flex flex-1 flex-col overflow-hidden">
+          <DashboardMobileHeader />
+          <main className="flex-1 overflow-y-auto">{children}</main>
+        </div>
+      </div>
+    </AuthGuard>
   );
 }

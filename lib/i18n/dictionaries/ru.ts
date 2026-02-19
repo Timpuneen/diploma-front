@@ -6,6 +6,7 @@ export const ru = {
     languages: "Языки",
     signIn: "Войти",
     getStarted: "Начать",
+    myProfile: "Мой профиль",
   },
 
   // Hero section
@@ -159,6 +160,14 @@ export const ru = {
     fileTooLarge: "Размер файла не должен превышать",
     textTooShort: "Текст должен содержать не менее",
     textTooLong: "Текст не должен превышать",
+    checkUrl: "Проверить URL",
+    urlPlaceholder: "https://example.com/article",
+    urlLabel: "URL веб-страницы",
+    urlHint: "Введите полный URL страницы для анализа содержимого на ИИ-текст",
+    analyzeUrl: "Анализировать URL",
+    urlEmpty: "Пожалуйста, введите URL",
+    urlInvalid: "URL должен начинаться с http:// или https://",
+    urlFailed: "Ошибка анализа URL. Попробуйте снова.",
     analysisFailed: "Ошибка анализа. Попробуйте снова.",
     fileFailed: "Ошибка анализа файла. Попробуйте снова.",
     language: "Язык",
