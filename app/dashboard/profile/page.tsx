@@ -36,17 +36,47 @@ export default function ProfilePage() {
   const [telegramStatus, setTelegramStatus] = useState<TelegramStatusResponse | null>(null);
   const [isConnectingTelegram, setIsConnectingTelegram] = useState(false);
   const [isDisconnectingTelegram, setIsDisconnectingTelegram] = useState(false);
+  const [isPolling, setIsPolling] = useState(false);
 
   useEffect(() => {
     apiClient.getUserLimits().then(setLimits).catch(() => {});
     apiClient.getTelegramStatus().then(setTelegramStatus).catch(() => {});
   }, []);
 
+  useEffect(() => {
+    if (!isPolling) return;
+
+    const timeout = setTimeout(() => {
+      setIsPolling(false);
+    }, 120_000);
+
+    const interval = setInterval(async () => {
+      try {
+        const status = await apiClient.getTelegramStatus();
+        if (status.is_connected !== telegramStatus?.is_connected) {
+          setTelegramStatus(status);
+          setIsPolling(false);
+          toast.success(
+            status.is_connected
+              ? locale === "kk" ? "Telegram қосылды" : "Telegram подключён"
+              : locale === "kk" ? "Telegram ажыратылды" : "Telegram отключён"
+          );
+        }
+      } catch {}
+    }, 3000);
+
+    return () => {
+      clearInterval(interval);
+      clearTimeout(timeout);
+    };
+  }, [isPolling, telegramStatus?.is_connected, locale]);
+
   async function handleConnectTelegram() {
     setIsConnectingTelegram(true);
     try {
       const { bot_url } = await apiClient.generateTelegramUrl();
       window.open(bot_url, "_blank");
+      setIsPolling(true);
     } catch {
       toast.error("Failed to generate Telegram link");
     } finally {
@@ -59,7 +89,7 @@ export default function ProfilePage() {
     try {
       await apiClient.disconnectTelegram();
       setTelegramStatus({ is_connected: false, telegram_chat_id: null });
-      toast.success("Telegram disconnected");
+      toast.success(locale === "kk" ? "Telegram ажыратылды" : "Telegram отключён");
     } catch {
       toast.error("Failed to disconnect Telegram");
     } finally {
@@ -199,7 +229,14 @@ export default function ProfilePage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-foreground">
-                    {locale === "kk" ? "Қосылмаған" : "Не подключен"}
+                    {isPolling ? (
+                      <span className="flex items-center gap-2 text-muted-foreground">
+                        <Loader2 className="h-3 w-3 animate-spin" />
+                        {locale === "kk" ? "Күтілуде..." : "Ожидание подключения..."}
+                      </span>
+                    ) : (
+                      locale === "kk" ? "Қосылмаған" : "Не подключен"
+                    )}
                   </p>
                   <p className="text-xs text-muted-foreground">
                     {locale === "kk"
@@ -211,7 +248,7 @@ export default function ProfilePage() {
                   variant="outline"
                   size="sm"
                   onClick={handleConnectTelegram}
-                  disabled={isConnectingTelegram}
+                  disabled={isConnectingTelegram || isPolling}
                   className="gap-2"
                 >
                   {isConnectingTelegram ? (
