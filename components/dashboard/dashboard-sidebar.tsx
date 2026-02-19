@@ -73,7 +73,7 @@ export function DashboardSidebar() {
         {user && (
           <div className="mb-3 px-3">
             <p className="truncate text-sm font-medium text-foreground">
-              {user.name}
+              {user.username}
             </p>
             <p className="truncate text-xs text-muted-foreground">
               {user.email}

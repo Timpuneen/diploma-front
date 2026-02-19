@@ -2,12 +2,12 @@
 
 /**
  * Analysis history page showing past text analyses.
- * Uses mock data for demo; ready for backend integration.
+ * Connected to the FastAPI backend for detection history.
  */
 
 import { useEffect, useState } from "react";
 import type { AnalysisHistoryItem } from "@/lib/types";
-import { getMockHistory } from "@/lib/mock";
+import { apiClient } from "@/lib/api";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Spinner } from "@/components/ui/spinner";
@@ -43,12 +43,17 @@ export default function HistoryPage() {
   }
 
   useEffect(() => {
-    // TODO: Replace with apiClient.getAnalysisHistory() when backend is ready
-    const timer = setTimeout(() => {
-      setHistory(getMockHistory());
-      setIsLoading(false);
-    }, 500);
-    return () => clearTimeout(timer);
+    apiClient
+      .getDetectionHistory(50, 0)
+      .then(({ items }) => {
+        setHistory(items);
+      })
+      .catch(() => {
+        // Silently handle — user will see empty state
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   }, []);
 
   return (

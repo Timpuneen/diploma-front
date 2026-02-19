@@ -90,6 +90,8 @@ export const kk: Dictionary = {
     subtitle: "Жалғастыру үшін аккаунтыңызға кіріңіз",
     email: "Электрондық пошта",
     emailPlaceholder: "you@example.com",
+    username: "Пайдаланушы аты",
+    usernamePlaceholder: "Пайдаланушы атын енгізіңіз",
     password: "Құпия сөз",
     passwordPlaceholder: "Құпия сөзді енгізіңіз",
     forgotPassword: "Құпия сөзді ұмыттыңыз ба?",
@@ -99,7 +101,7 @@ export const kk: Dictionary = {
     signUp: "Тіркелу",
     fillAll: "Барлық өрістерді толтырыңыз",
     welcomeBack: "Қош келдіңіз!",
-    invalidCredentials: "Қате email немесе құпия сөз",
+    invalidCredentials: "Қате пайдаланушы аты немесе құпия сөз",
   },
 
   // Auth - Register
@@ -108,6 +110,8 @@ export const kk: Dictionary = {
     subtitle: "ЖИ мәтінін анықтаумен жұмысты бастаңыз",
     fullName: "Толық аты-жөні",
     namePlaceholder: "Айбек Серікұлы",
+    username: "Пайдаланушы аты",
+    usernamePlaceholder: "Пайдаланушы атын енгізіңіз",
     email: "Электрондық пошта",
     emailPlaceholder: "you@example.com",
     password: "Құпия сөз",

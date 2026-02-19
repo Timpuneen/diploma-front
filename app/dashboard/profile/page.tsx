@@ -1,61 +1,70 @@
 "use client";
 
-import React from "react"
+import React from "react";
 
 /**
- * User profile page with editable name/email and account info.
- * Uses AuthContext for user data; ready for backend integration.
+ * User profile page displaying user information and limits.
+ * Connected to the FastAPI backend via auth-context and apiClient.
  */
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "@/lib/auth-context";
+import { apiClient } from "@/lib/api";
+import type { UserLimits, TelegramStatusResponse } from "@/lib/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+import { Progress } from "@/components/ui/progress";
 import { useLocale } from "@/lib/i18n/locale-context";
 import { toast } from "sonner";
-import { Loader2, UserCircle, Mail, Calendar, Shield } from "lucide-react";
+import {
+  UserCircle,
+  Mail,
+  Shield,
+  BarChart3,
+  Loader2,
+  MessageCircle,
+  ExternalLink,
+  Unlink,
+} from "lucide-react";
 
 export default function ProfilePage() {
-  const { user, updateUser } = useAuth();
-  const [isEditing, setIsEditing] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
-  const [name, setName] = useState(user?.name ?? "");
-  const [email, setEmail] = useState(user?.email ?? "");
+  const { user } = useAuth();
   const { t, locale } = useLocale();
 
-  async function handleSave(e: React.FormEvent) {
-    e.preventDefault();
+  const [limits, setLimits] = useState<UserLimits | null>(null);
+  const [telegramStatus, setTelegramStatus] = useState<TelegramStatusResponse | null>(null);
+  const [isConnectingTelegram, setIsConnectingTelegram] = useState(false);
+  const [isDisconnectingTelegram, setIsDisconnectingTelegram] = useState(false);
 
-    if (!name.trim()) {
-      toast.error(t.profilePage.nameEmpty);
-      return;
-    }
-    if (!email.trim()) {
-      toast.error(t.profilePage.emailEmpty);
-      return;
-    }
+  useEffect(() => {
+    apiClient.getUserLimits().then(setLimits).catch(() => {});
+    apiClient.getTelegramStatus().then(setTelegramStatus).catch(() => {});
+  }, []);
 
-    setIsSaving(true);
+  async function handleConnectTelegram() {
+    setIsConnectingTelegram(true);
     try {
-      // TODO: Replace with apiClient.updateProfile({ name, email }) when backend is ready
-      await new Promise((resolve) => setTimeout(resolve, 600));
-      updateUser({ name, email });
-      setIsEditing(false);
-      toast.success(t.profilePage.updateSuccess);
+      const { bot_url } = await apiClient.generateTelegramUrl();
+      window.open(bot_url, "_blank");
     } catch {
-      toast.error(t.profilePage.updateFailed);
+      toast.error("Failed to generate Telegram link");
     } finally {
-      setIsSaving(false);
+      setIsConnectingTelegram(false);
     }
   }
 
-  function handleCancel() {
-    setName(user?.name ?? "");
-    setEmail(user?.email ?? "");
-    setIsEditing(false);
+  async function handleDisconnectTelegram() {
+    setIsDisconnectingTelegram(true);
+    try {
+      await apiClient.disconnectTelegram();
+      setTelegramStatus({ is_connected: false, telegram_chat_id: null });
+      toast.success("Telegram disconnected");
+    } catch {
+      toast.error("Failed to disconnect Telegram");
+    } finally {
+      setIsDisconnectingTelegram(false);
+    }
   }
 
   if (!user) return null;
@@ -78,90 +87,146 @@ export default function ProfilePage() {
             </div>
             <div>
               <h2 className="text-lg font-semibold text-foreground">
-                {user.name}
+                {user.username}
               </h2>
               <p className="text-sm text-muted-foreground">{user.email}</p>
             </div>
           </CardContent>
         </Card>
 
-        {/* Editable profile form */}
+        {/* Personal info */}
         <Card className="border-border/50">
-          <CardHeader className="flex flex-row items-center justify-between">
+          <CardHeader>
             <CardTitle className="text-base">{t.profilePage.personalInfo}</CardTitle>
-            {!isEditing && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setIsEditing(true)}
-              >
-                {t.profilePage.edit}
-              </Button>
-            )}
+          </CardHeader>
+          <CardContent className="flex flex-col gap-4">
+            <InfoRow icon={UserCircle} label={t.profilePage.name} value={user.username} />
+            <Separator />
+            <InfoRow icon={Mail} label={t.profilePage.email} value={user.email} />
+          </CardContent>
+        </Card>
+
+        {/* Usage Limits */}
+        {limits && (
+          <Card className="border-border/50">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-base">
+                <BarChart3 className="h-4 w-4" />
+                {locale === "kk" ? "Пайдалану лимиттері" : "Лимиты использования"}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="flex flex-col gap-5">
+              <div>
+                <div className="mb-2 flex items-center justify-between text-sm">
+                  <span className="text-muted-foreground">
+                    {locale === "kk" ? "Күнделікті" : "Дневные запросы"}
+                  </span>
+                  <span className="font-medium text-foreground">
+                    {limits.daily_used} / {limits.daily_limit}
+                  </span>
+                </div>
+                <Progress
+                  value={(limits.daily_used / limits.daily_limit) * 100}
+                  className="h-2"
+                />
+                <p className="mt-1 text-xs text-muted-foreground">
+                  {locale === "kk" ? "Қалды" : "Осталось"}: {limits.daily_remaining}
+                </p>
+              </div>
+              <div>
+                <div className="mb-2 flex items-center justify-between text-sm">
+                  <span className="text-muted-foreground">
+                    {locale === "kk" ? "Айлық" : "Месячные запросы"}
+                  </span>
+                  <span className="font-medium text-foreground">
+                    {limits.monthly_used} / {limits.monthly_limit}
+                  </span>
+                </div>
+                <Progress
+                  value={(limits.monthly_used / limits.monthly_limit) * 100}
+                  className="h-2"
+                />
+                <p className="mt-1 text-xs text-muted-foreground">
+                  {locale === "kk" ? "Қалды" : "Осталось"}: {limits.monthly_remaining}
+                </p>
+              </div>
+              <Separator />
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-muted-foreground">
+                  {locale === "kk" ? "Барлық сұраулар" : "Всего запросов"}
+                </span>
+                <span className="font-semibold text-foreground">{limits.total_requests}</span>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Telegram Integration */}
+        <Card className="border-border/50">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-base">
+              <MessageCircle className="h-4 w-4" />
+              Telegram
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            {isEditing ? (
-              <form onSubmit={handleSave} className="flex flex-col gap-4">
-                <div className="flex flex-col gap-2">
-                  <Label htmlFor="profile-name">{t.profilePage.fullName}</Label>
-                  <Input
-                    id="profile-name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    required
-                  />
+            {telegramStatus?.is_connected ? (
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-foreground">
+                    {locale === "kk" ? "Қосылған" : "Подключен"}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    Chat ID: {telegramStatus.telegram_chat_id}
+                  </p>
                 </div>
-                <div className="flex flex-col gap-2">
-                  <Label htmlFor="profile-email">{t.profilePage.email}</Label>
-                  <Input
-                    id="profile-email"
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                  />
-                </div>
-                <div className="flex items-center gap-3 pt-2">
-                  <Button type="submit" disabled={isSaving} className="gap-2">
-                    {isSaving ? (
-                      <>
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                        {t.profilePage.saving}
-                      </>
-                    ) : (
-                      t.profilePage.saveChanges
-                    )}
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    onClick={handleCancel}
-                  >
-                    {t.profilePage.cancel}
-                  </Button>
-                </div>
-              </form>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleDisconnectTelegram}
+                  disabled={isDisconnectingTelegram}
+                  className="gap-2"
+                >
+                  {isDisconnectingTelegram ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Unlink className="h-4 w-4" />
+                  )}
+                  {locale === "kk" ? "Ажырату" : "Отключить"}
+                </Button>
+              </div>
             ) : (
-              <div className="flex flex-col gap-4">
-                <InfoRow icon={UserCircle} label={t.profilePage.name} value={user.name} />
-                <Separator />
-                <InfoRow icon={Mail} label={t.profilePage.email} value={user.email} />
-                <Separator />
-                <InfoRow
-                  icon={Calendar}
-                  label={t.profilePage.memberSince}
-                  value={new Date(user.createdAt).toLocaleDateString(locale === "kk" ? "kk-KZ" : "ru-RU", {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                  })}
-                />
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-foreground">
+                    {locale === "kk" ? "Қосылмаған" : "Не подключен"}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {locale === "kk"
+                      ? "Telegram бот арқылы хабарландырулар алыңыз"
+                      : "Получайте уведомления через Telegram-бота"}
+                  </p>
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleConnectTelegram}
+                  disabled={isConnectingTelegram}
+                  className="gap-2"
+                >
+                  {isConnectingTelegram ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <ExternalLink className="h-4 w-4" />
+                  )}
+                  {locale === "kk" ? "Қосу" : "Подключить"}
+                </Button>
               </div>
             )}
           </CardContent>
         </Card>
 
-        {/* Account section */}
+        {/* Security section */}
         <Card className="border-border/50">
           <CardHeader>
             <CardTitle className="text-base">{t.profilePage.security}</CardTitle>

@@ -2,8 +2,7 @@
 
 /**
  * Authentication context providing user state and auth operations.
- * Wraps the application with auth state management.
- * Replace mock logic with real API calls when backend is ready.
+ * Connected to the FastAPI backend via apiClient.
  */
 
 import {
@@ -16,7 +15,7 @@ import {
   type ReactNode,
 } from "react";
 import type { LoginCredentials, RegisterCredentials, User } from "./types";
-import { getMockUser, simulateDelay } from "./mock";
+import { apiClient } from "./api";
 
 interface AuthState {
   user: User | null;
@@ -53,6 +52,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     isAuthenticated: false,
   });
 
+  // On mount, check if there's a stored token and fetch user profile
   useEffect(() => {
     const token = document.cookie
       .split("; ")
@@ -60,48 +60,55 @@ export function AuthProvider({ children }: AuthProviderProps) {
       ?.split("=")[1];
 
     if (token) {
-      // TODO: Replace with apiClient.getProfile() when backend is ready
-      setState({
-        user: getMockUser(),
-        isLoading: false,
-        isAuthenticated: true,
-      });
+      apiClient
+        .getMe()
+        .then((user) => {
+          setState({
+            user,
+            isLoading: false,
+            isAuthenticated: true,
+          });
+        })
+        .catch(() => {
+          // Token is invalid or expired — clear it
+          apiClient.clearTokens();
+          setState({ user: null, isLoading: false, isAuthenticated: false });
+        });
     } else {
       setState((prev) => ({ ...prev, isLoading: false }));
     }
   }, []);
 
-  const login = useCallback(async (_credentials: LoginCredentials) => {
+  const login = useCallback(async (credentials: LoginCredentials) => {
     setState((prev) => ({ ...prev, isLoading: true }));
     try {
-      // TODO: Replace with apiClient.login(credentials) when backend is ready
-      await simulateDelay(800);
-      const user = getMockUser();
-      document.cookie = "auth_token=mock_jwt_token; path=/; max-age=86400; SameSite=Strict";
+      const tokens = await apiClient.login(credentials);
+      apiClient.setTokens(tokens);
+
+      const user = await apiClient.getMe();
       setState({ user, isLoading: false, isAuthenticated: true });
-    } catch {
+    } catch (err) {
       setState((prev) => ({ ...prev, isLoading: false }));
-      throw new Error("Invalid credentials");
+      throw err;
     }
   }, []);
 
-  const register = useCallback(async (_credentials: RegisterCredentials) => {
+  const register = useCallback(async (credentials: RegisterCredentials) => {
     setState((prev) => ({ ...prev, isLoading: true }));
     try {
-      // TODO: Replace with apiClient.register(credentials) when backend is ready
-      await simulateDelay(800);
-      const user = getMockUser();
-      document.cookie = "auth_token=mock_jwt_token; path=/; max-age=86400; SameSite=Strict";
+      const tokens = await apiClient.register(credentials);
+      apiClient.setTokens(tokens);
+
+      const user = await apiClient.getMe();
       setState({ user, isLoading: false, isAuthenticated: true });
-    } catch {
+    } catch (err) {
       setState((prev) => ({ ...prev, isLoading: false }));
-      throw new Error("Registration failed");
+      throw err;
     }
   }, []);
 
   const logout = useCallback(async () => {
-    // TODO: Replace with apiClient.logout() when backend is ready
-    document.cookie = "auth_token=; path=/; max-age=0";
+    apiClient.clearTokens();
     setState({ user: null, isLoading: false, isAuthenticated: false });
   }, []);
 
