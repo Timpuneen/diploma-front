@@ -161,7 +161,9 @@ export function TextInputForm({
                 placeholder={t.analyze.textPlaceholder}
                 value={text}
                 onChange={(e) => setText(e.target.value)}
-                className="min-h-[240px] resize-y bg-background text-sm leading-relaxed"
+                className="min-h-[240px] resize-y bg-background text-sm leading-relaxed
+                  scrollbar-thin scrollbar-track-transparent scrollbar-thumb-border 
+                  hover:scrollbar-thumb-muted-foreground"
                 maxLength={MAX_TEXT_LENGTH}
               />
               <div className="mt-2 flex items-center justify-between text-xs text-muted-foreground">

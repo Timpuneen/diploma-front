@@ -264,7 +264,7 @@ export default function ProfilePage() {
         </Card>
 
         {/* Security section */}
-        <Card className="border-border/50">
+        {/* <Card className="border-border/50">
           <CardHeader>
             <CardTitle className="text-base">{t.profilePage.security}</CardTitle>
           </CardHeader>
@@ -286,7 +286,7 @@ export default function ProfilePage() {
               </Button>
             </div>
           </CardContent>
-        </Card>
+        </Card> */}
       </div>
     </div>
   );
