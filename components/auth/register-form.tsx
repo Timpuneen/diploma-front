@@ -52,8 +52,26 @@ export function RegisterForm() {
       await register({ username, email, password });
       toast.success(t.register.success);
       router.push(ROUTES.ANALYZE);
-    } catch {
-      toast.error(t.register.failed);
+    } catch (err: unknown) {
+      const apiError = err as { detail?: string | Array<{ loc?: string[]; msg?: string }> };
+
+      if (apiError?.detail) {
+        if (typeof apiError.detail === "string") {
+          // Single string error from backend (400 / 500)
+          toast.error(apiError.detail);
+        } else if (Array.isArray(apiError.detail)) {
+          // Pydantic validation errors (422) — show each one
+          for (const item of apiError.detail) {
+            const field = item.loc?.slice(-1)[0] ?? "";
+            const msg = item.msg ?? "";
+            toast.error(field ? `${field}: ${msg}` : msg);
+          }
+        } else {
+          toast.error(t.register.failed);
+        }
+      } else {
+        toast.error(t.register.failed);
+      }
     } finally {
       setIsSubmitting(false);
     }

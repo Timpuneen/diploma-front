@@ -1,9 +1,6 @@
 "use client";
 
-/**
- * Language switcher dropdown for selecting between Russian and Kazakh.
- */
-
+import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { useLocale, type Locale } from "@/lib/i18n/locale-context";
 import { Button } from "@/components/ui/button";
@@ -22,15 +19,24 @@ const LOCALE_OPTIONS: { value: Locale; label: string; flag: string }[] = [
 
 export function LanguageSwitcher({ variant = "ghost", className }: { variant?: "ghost" | "outline"; className?: string }) {
   const { locale, setLocale } = useLocale();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => setMounted(true), []);
+
+  if (!mounted) {
+    return (
+      <Button variant={variant} size="sm" className={cn("gap-2", className)} disabled>
+        <Languages className="h-4 w-4" />
+      </Button>
+    );
+  }
 
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
         <Button variant={variant} size="sm" className={cn("gap-2", className)}>
           <Languages className="h-4 w-4" />
-          <span className="text-xs font-medium">
-            {locale === "ru" ? "RU" : "KZ"}
-          </span>
+          <span className="text-xs font-medium">{locale === "ru" ? "RU" : "KZ"}</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">

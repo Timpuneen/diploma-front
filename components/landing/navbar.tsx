@@ -2,6 +2,7 @@
 
 /**
  * Landing page navigation bar with responsive mobile menu.
+ * Shows login/register when not authenticated, profile link when authenticated.
  */
 
 import { useState } from "react";
@@ -9,12 +10,14 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ROUTES } from "@/lib/constants";
 import { useLocale } from "@/lib/i18n/locale-context";
+import { useAuth } from "@/lib/auth-context";
 import { LanguageSwitcher } from "@/components/language-switcher";
-import { Menu, X, Shield } from "lucide-react";
+import { Menu, X, Shield, User } from "lucide-react";
 
 export function Navbar() {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const { t } = useLocale();
+  const { isAuthenticated, isLoading } = useAuth();
 
   const NAV_LINKS = [
     { href: "#features", label: t.nav.features },
@@ -57,11 +60,24 @@ export function Navbar() {
 
         <div className="hidden items-center gap-3 md:flex">
           <LanguageSwitcher />
-          <Button variant="ghost" asChild>
-            <Link href={ROUTES.LOGIN}>{t.nav.signIn}</Link>
-          </Button>
+          {!isLoading && (
+            isAuthenticated ? (
+              <Button asChild variant="ghost">
+                <Link href={ROUTES.PROFILE} className="gap-2">
+                  <User className="h-4 w-4" />
+                  {t.nav.myProfile}
+                </Link>
+              </Button>
+            ) : (
+              <Button asChild variant="ghost">
+                <Link href={ROUTES.LOGIN}>{t.nav.signIn}</Link>
+              </Button>
+            )
+          )}
           <Button asChild>
-            <Link href={ROUTES.REGISTER}>{t.nav.getStarted}</Link>
+            <Link href={isAuthenticated ? ROUTES.ANALYZE : ROUTES.REGISTER}>
+              {isAuthenticated ? t.nav.analyze : t.nav.getStarted}
+            </Link>
           </Button>
         </div>
 
@@ -92,12 +108,23 @@ export function Navbar() {
               </a>
             ))}
             <div className="flex flex-col gap-2 pt-2">
-              <Button variant="ghost" asChild>
-                <Link href={ROUTES.LOGIN}>{t.nav.signIn}</Link>
-              </Button>
-              <Button asChild>
-                <Link href={ROUTES.REGISTER}>{t.nav.getStarted}</Link>
-              </Button>
+              {!isLoading && isAuthenticated ? (
+                <Button asChild>
+                  <Link href={ROUTES.PROFILE} className="gap-2">
+                    <User className="h-4 w-4" />
+                    {t.nav.myProfile}
+                  </Link>
+                </Button>
+              ) : (
+                <>
+                  <Button variant="ghost" asChild>
+                    <Link href={ROUTES.LOGIN}>{t.nav.signIn}</Link>
+                  </Button>
+                  <Button asChild>
+                    <Link href={ROUTES.REGISTER}>{t.nav.getStarted}</Link>
+                  </Button>
+                </>
+              )}
             </div>
           </div>
         </div>

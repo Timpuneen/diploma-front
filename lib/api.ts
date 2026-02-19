@@ -202,6 +202,17 @@ class ApiClient {
     };
   }
 
+  async detectUrl(url: string): Promise<{ result: AnalysisResult; limits: UserLimits }> {
+    const res = await this.request<AIDetectionWithLimitsResponse>("/ai-detection/detect-url", {
+      method: "POST",
+      body: JSON.stringify({ url }),
+    });
+    return {
+      result: mapDetectionToAnalysisResult(res, res.text_preview),
+      limits: res.limits,
+    };
+  }
+
   // ---- User Limits & History ----
 
   async getUserLimits(): Promise<UserLimits> {

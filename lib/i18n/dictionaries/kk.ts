@@ -8,6 +8,8 @@ export const kk: Dictionary = {
     languages: "Тілдер",
     signIn: "Кіру",
     getStarted: "Бастау",
+    analyze: "Талдау",
+    myProfile: "Менің профилім",
   },
 
   // Hero section
@@ -161,6 +163,14 @@ export const kk: Dictionary = {
     fileTooLarge: "Файл көлемі аспауы керек",
     textTooShort: "Мәтін кемінде болуы керек",
     textTooLong: "Мәтін аспауы керек",
+    checkUrl: "URL тексеру",
+    urlPlaceholder: "https://example.com/article",
+    urlLabel: "Веб-бет URL",
+    urlHint: "ЖИ мәтінін талдау үшін беттің толық URL мекенжайын енгізіңіз",
+    analyzeUrl: "URL талдау",
+    urlEmpty: "URL енгізіңіз",
+    urlInvalid: "URL http:// немесе https:// арқылы басталуы керек",
+    urlFailed: "URL талдау қатесі. Қайталап көріңіз.",
     analysisFailed: "Талдау қатесі. Қайталап көріңіз.",
     fileFailed: "Файл талдауының қатесі. Қайталап көріңіз.",
     language: "Тіл",
