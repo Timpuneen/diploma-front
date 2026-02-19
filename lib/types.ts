@@ -149,7 +149,7 @@ export interface ValidationErrorItem {
 }
 
 export interface ApiError {
-  detail: string | ValidationErrorItem[];
+  detail: string;
   error_type?: string;
 }
 

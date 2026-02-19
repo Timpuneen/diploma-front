@@ -2,7 +2,7 @@
 
 /**
  * Main text analysis page combining input form, progress, and results.
- * Connected to the FastAPI backend for AI detection via text, file, or URL.
+ * Connected to the FastAPI backend for AI detection.
  */
 
 import { useCallback, useState } from "react";
@@ -41,19 +41,6 @@ export default function AnalyzePage() {
     } catch (err) {
       const detail = (err as { detail?: string })?.detail;
       toast.error(detail || t.analyze.fileFailed);
-      setStatus("error");
-    }
-  }, [t]);
-
-  const handleUrlAnalyze = useCallback(async (url: string) => {
-    setStatus("analyzing");
-    try {
-      const { result: analysisResult } = await apiClient.detectUrl(url);
-      setResult(analysisResult);
-      setStatus("complete");
-    } catch (err) {
-      const detail = (err as { detail?: string })?.detail;
-      toast.error(detail || t.analyze.urlFailed);
       setStatus("error");
     }
   }, [t]);
