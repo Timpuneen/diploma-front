@@ -42,7 +42,7 @@ export function DashboardSidebar() {
       <Link href={ROUTES.HOME} className="flex items-center gap-2 border-b border-border/50 px-6 py-5">
         <Shield className="h-6 w-6 text-primary" />
         <span className="text-lg font-semibold text-foreground">
-          AI Detector
+          LangProof AI
         </span>
       </Link>
 

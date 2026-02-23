@@ -51,7 +51,7 @@ export function DashboardMobileHeader() {
     <header className="flex items-center justify-between border-b border-border/50 bg-card px-4 py-3 lg:hidden">
       <Link href={ROUTES.HOME} className="flex items-center gap-2">
         <Shield className="h-5 w-5 text-primary" />
-        <span className="font-semibold text-foreground">AI Detector</span>
+        <span className="font-semibold text-foreground">LangProof AI</span>
       </Link>
 
       <Sheet open={open} onOpenChange={setOpen}>
@@ -66,7 +66,7 @@ export function DashboardMobileHeader() {
           <div className="flex items-center gap-2 border-b border-border/50 px-6 py-5">
             <Shield className="h-6 w-6 text-primary" />
             <span className="text-lg font-semibold text-foreground">
-              AI Detector
+              LangProof AI
             </span>
           </div>
           <nav className="flex-1 px-3 py-4">

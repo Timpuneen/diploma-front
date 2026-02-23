@@ -41,7 +41,7 @@ export function Navbar() {
         <Link href="/" className="flex items-center gap-2">
           <Shield className="h-6 w-6 text-primary" />
           <span className="text-lg font-semibold text-foreground">
-            AI Detector
+            LangProof AI
           </span>
         </Link>
 
