@@ -16,6 +16,8 @@ import {
 } from "react";
 import type { LoginCredentials, RegisterCredentials, User } from "./types";
 import { apiClient } from "./api";
+import { getMockUser } from "./mock";
+
 
 interface AuthState {
   user: User | null;
@@ -54,29 +56,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   // On mount, check if there's a stored token and fetch user profile
   useEffect(() => {
-    const token = document.cookie
-      .split("; ")
-      .find((row) => row.startsWith("auth_token="))
-      ?.split("=")[1];
-
-    if (token) {
-      apiClient
-        .getMe()
-        .then((user) => {
-          setState({
-            user,
-            isLoading: false,
-            isAuthenticated: true,
-          });
-        })
-        .catch(() => {
-          // Token is invalid or expired — clear it
-          apiClient.clearTokens();
-          setState({ user: null, isLoading: false, isAuthenticated: false });
-        });
-    } else {
-      setState((prev) => ({ ...prev, isLoading: false }));
-    }
+    // TEMP: mock auth for Figma export
+    setState({
+      user: getMockUser(),
+      isLoading: false,
+      isAuthenticated: true,
+    });
   }, []);
 
   const login = useCallback(async (credentials: LoginCredentials) => {
