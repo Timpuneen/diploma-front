@@ -50,7 +50,7 @@ export function HeroSection() {
 
         <div className="mt-16 grid grid-cols-3 gap-8">
           {[
-            { value: "67.69%", label: t.hero.accuracy },
+            { value: "90%", label: t.hero.accuracy },
             { value: "2", label: t.hero.languagesCount },
             { value: "<2s", label: t.hero.analysisTime },
           ].map((stat) => (
