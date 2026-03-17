@@ -1,9 +1,9 @@
 "use client";
 
-import React from "react"
+import React from "react";
 
 /**
- * Text analysis input form with text area, file upload, and URL tabs.
+ * Text analysis input form with text area and attachment popover for file/URL.
  * Validates input and triggers analysis via callback.
  */
 
@@ -12,7 +12,6 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Select,
   SelectContent,
@@ -20,6 +19,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import {
   MAX_TEXT_LENGTH,
   MIN_TEXT_LENGTH,
@@ -29,7 +33,7 @@ import {
 } from "@/lib/constants";
 import { useLocale } from "@/lib/i18n/locale-context";
 import { toast } from "sonner";
-import { Upload, FileText, Loader2, X, Globe } from "lucide-react";
+import { Plus, FileText, Loader2, X, Globe, Link2 } from "lucide-react";
 
 interface TextInputFormProps {
   onAnalyze: (text: string, language: string) => void;
@@ -37,6 +41,8 @@ interface TextInputFormProps {
   onUrlAnalyze: (url: string) => void;
   isAnalyzing: boolean;
 }
+
+type AttachmentType = "file" | "url" | null;
 
 export function TextInputForm({
   onAnalyze,
@@ -48,14 +54,37 @@ export function TextInputForm({
   const [language, setLanguage] = useState("auto");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [url, setUrl] = useState("");
+  const [attachmentType, setAttachmentType] = useState<AttachmentType>(null);
+  const [popoverOpen, setPopoverOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { t } = useLocale();
 
   const wordCount = text.trim() ? text.trim().split(/\s+/).length : 0;
   const charCount = text.length;
 
-  function handleTextSubmit(e: React.FormEvent) {
+  const hasAttachment = selectedFile !== null || url.trim() !== "";
+
+  function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+
+    // If file is attached, analyze file
+    if (selectedFile) {
+      onFileAnalyze(selectedFile, language);
+      return;
+    }
+
+    // If URL is attached, analyze URL
+    if (url.trim()) {
+      const trimmedUrl = url.trim();
+      if (!trimmedUrl.startsWith("http://") && !trimmedUrl.startsWith("https://")) {
+        toast.error(t.analyze.urlInvalid);
+        return;
+      }
+      onUrlAnalyze(trimmedUrl);
+      return;
+    }
+
+    // Otherwise analyze text
     if (text.length < MIN_TEXT_LENGTH) {
       toast.error(`${t.analyze.textTooShort} ${MIN_TEXT_LENGTH} ${t.analyze.chars}`);
       return;
@@ -67,27 +96,20 @@ export function TextInputForm({
     onAnalyze(text, language);
   }
 
-  function handleFileSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    if (!selectedFile) {
-      toast.error(t.analyze.selectFile);
+  function validateAndSetFile(file: File) {
+    if (file.size > MAX_FILE_SIZE_BYTES) {
+      toast.error(`${t.analyze.fileTooLarge} ${MAX_FILE_SIZE_MB}MB`);
       return;
     }
-    onFileAnalyze(selectedFile, language);
+    setSelectedFile(file);
+    setUrl("");
+    setAttachmentType("file");
+    setPopoverOpen(false);
   }
 
-  function handleUrlSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    const trimmedUrl = url.trim();
-    if (!trimmedUrl) {
-      toast.error(t.analyze.urlEmpty);
-      return;
-    }
-    if (!trimmedUrl.startsWith("http://") && !trimmedUrl.startsWith("https://")) {
-      toast.error(t.analyze.urlInvalid);
-      return;
-    }
-    onUrlAnalyze(trimmedUrl);
+  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (file) validateAndSetFile(file);
   }
 
   const handleDrop = useCallback((e: React.DragEvent) => {
@@ -96,18 +118,27 @@ export function TextInputForm({
     if (file) validateAndSetFile(file);
   }, []);
 
-  function validateAndSetFile(file: File) {
-    if (file.size > MAX_FILE_SIZE_BYTES) {
-      toast.error(`${t.analyze.fileTooLarge} ${MAX_FILE_SIZE_MB}MB`);
-      return;
-    }
-    setSelectedFile(file);
+  function handleAttachUrl() {
+    setAttachmentType("url");
+    setSelectedFile(null);
+    setPopoverOpen(false);
   }
 
-  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (file) validateAndSetFile(file);
+  function handleAttachFile() {
+    fileInputRef.current?.click();
   }
+
+  function clearAttachment() {
+    setSelectedFile(null);
+    setUrl("");
+    setAttachmentType(null);
+  }
+
+  const canSubmit =
+    !isAnalyzing &&
+    (selectedFile !== null ||
+      url.trim() !== "" ||
+      charCount >= MIN_TEXT_LENGTH);
 
   return (
     <div className="rounded-xl border border-border/50 bg-card p-6">
@@ -137,184 +168,164 @@ export function TextInputForm({
         </div>
       </div>
 
-      <Tabs defaultValue="text">
-        <TabsList className="mb-4">
-          <TabsTrigger value="text" className="gap-2">
-            <FileText className="h-3.5 w-3.5" />
-            {t.analyze.pasteText}
-          </TabsTrigger>
-          <TabsTrigger value="file" className="gap-2">
-            <Upload className="h-3.5 w-3.5" />
-            {t.analyze.uploadFile}
-          </TabsTrigger>
-          <TabsTrigger value="url" className="gap-2">
-            <Globe className="h-3.5 w-3.5" />
-            {t.analyze.checkUrl}
-          </TabsTrigger>
-        </TabsList>
-
-        {/* ---- Text tab ---- */}
-        <TabsContent value="text">
-          <form onSubmit={handleTextSubmit} className="flex flex-col gap-4">
-            <div className="relative">
-              <Textarea
-                placeholder={t.analyze.textPlaceholder}
-                value={text}
-                onChange={(e) => setText(e.target.value)}
-                className="min-h-[240px] resize-y bg-background text-sm leading-relaxed
-                  scrollbar-thin scrollbar-track-transparent scrollbar-thumb-border 
-                  hover:scrollbar-thumb-muted-foreground"
-                maxLength={MAX_TEXT_LENGTH}
-              />
-              <div className="mt-2 flex items-center justify-between text-xs text-muted-foreground">
-                <span>
-                  {wordCount} {t.analyze.words} / {charCount} {t.analyze.characters}
-                </span>
-                <span>
-                  {t.analyze.minChars} {MIN_TEXT_LENGTH} {t.analyze.chars}, {t.analyze.maxChars}{" "}
-                  {MAX_TEXT_LENGTH.toLocaleString()} {t.analyze.chars}
-                </span>
-              </div>
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        {/* Attachment display */}
+        {attachmentType === "file" && selectedFile && (
+          <div className="flex items-center gap-3 rounded-lg border border-border/50 bg-background p-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+              <FileText className="h-5 w-5 text-primary" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="truncate text-sm font-medium text-foreground">
+                {selectedFile.name}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                {(selectedFile.size / 1024).toFixed(1)} KB
+              </p>
             </div>
             <Button
-              type="submit"
-              disabled={isAnalyzing || charCount < MIN_TEXT_LENGTH}
-              className="self-end gap-2"
+              type="button"
+              variant="ghost"
+              size="icon"
+              onClick={clearAttachment}
+              className="h-8 w-8 text-muted-foreground hover:text-foreground"
             >
-              {isAnalyzing ? (
-                <>
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  {t.analyze.analyzing}
-                </>
-              ) : (
-                t.analyze.analyzeTextBtn
-              )}
+              <X className="h-4 w-4" />
+              <span className="sr-only">{t.analyze.remove}</span>
             </Button>
-          </form>
-        </TabsContent>
+          </div>
+        )}
 
-        {/* ---- File tab ---- */}
-        <TabsContent value="file">
-          <form onSubmit={handleFileSubmit} className="flex flex-col gap-4">
-            <div
-              onDrop={handleDrop}
-              onDragOver={(e) => e.preventDefault()}
-              className="flex min-h-[240px] cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-border/50 bg-background transition-colors hover:border-primary/30"
-              onClick={() => fileInputRef.current?.click()}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  fileInputRef.current?.click();
-                }
-              }}
-              role="button"
-              tabIndex={0}
-              aria-label="Upload file for analysis"
-            >
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept={ACCEPTED_FILE_EXTENSIONS}
-                onChange={handleFileChange}
-                className="hidden"
+        {attachmentType === "url" && (
+          <div className="flex items-center gap-3 rounded-lg border border-border/50 bg-background p-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+              <Link2 className="h-5 w-5 text-primary" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <Input
+                type="url"
+                placeholder={t.analyze.urlPlaceholder}
+                value={url}
+                onChange={(e) => setUrl(e.target.value)}
+                className="border-0 bg-transparent p-0 text-sm focus-visible:ring-0"
               />
-              {selectedFile ? (
-                <div className="flex flex-col items-center gap-3">
-                  <FileText className="h-10 w-10 text-primary" />
-                  <div className="text-center">
-                    <p className="text-sm font-medium text-foreground">
-                      {selectedFile.name}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      {(selectedFile.size / 1024).toFixed(1)} KB
-                    </p>
-                  </div>
+            </div>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              onClick={clearAttachment}
+              className="h-8 w-8 text-muted-foreground hover:text-foreground"
+            >
+              <X className="h-4 w-4" />
+              <span className="sr-only">{t.analyze.remove}</span>
+            </Button>
+          </div>
+        )}
+
+        {/* Text area */}
+        <div
+          className="relative"
+          onDrop={handleDrop}
+          onDragOver={(e) => e.preventDefault()}
+        >
+          <Textarea
+            placeholder={
+              hasAttachment
+                ? t.analyze.attachmentAddedHint
+                : t.analyze.textPlaceholder
+            }
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            className="min-h-[200px] resize-y bg-background pr-12 text-sm leading-relaxed
+              scrollbar-thin scrollbar-track-transparent scrollbar-thumb-border 
+              hover:scrollbar-thumb-muted-foreground"
+            maxLength={MAX_TEXT_LENGTH}
+            disabled={hasAttachment}
+          />
+
+          {/* Plus button for attachments */}
+          <div className="absolute bottom-3 right-3">
+            <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
+              <PopoverTrigger asChild>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="icon"
+                  className="h-8 w-8 rounded-full"
+                  disabled={hasAttachment}
+                >
+                  <Plus className="h-4 w-4" />
+                  <span className="sr-only">{t.analyze.addAttachment}</span>
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent align="end" className="w-48 p-2">
+                <div className="flex flex-col gap-1">
                   <Button
                     type="button"
                     variant="ghost"
-                    size="sm"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setSelectedFile(null);
-                    }}
-                    className="gap-1 text-muted-foreground"
+                    className="justify-start gap-2 text-sm"
+                    onClick={handleAttachFile}
                   >
-                    <X className="h-3 w-3" />
-                    {t.analyze.remove}
+                    <FileText className="h-4 w-4" />
+                    {t.analyze.attachFile}
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    className="justify-start gap-2 text-sm"
+                    onClick={handleAttachUrl}
+                  >
+                    <Globe className="h-4 w-4" />
+                    {t.analyze.attachUrl}
                   </Button>
                 </div>
-              ) : (
-                <div className="flex flex-col items-center gap-3">
-                  <Upload className="h-10 w-10 text-muted-foreground" />
-                  <div className="text-center">
-                    <p className="text-sm font-medium text-foreground">
-                      {t.analyze.dropFile}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      {t.analyze.fileTypes} {MAX_FILE_SIZE_MB}MB
-                    </p>
-                  </div>
-                </div>
-              )}
-            </div>
-            <Button
-              type="submit"
-              disabled={isAnalyzing || !selectedFile}
-              className="self-end gap-2"
-            >
-              {isAnalyzing ? (
-                <>
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  {t.analyze.analyzing}
-                </>
-              ) : (
-                t.analyze.analyzeFile
-              )}
-            </Button>
-          </form>
-        </TabsContent>
+              </PopoverContent>
+            </Popover>
+          </div>
 
-        {/* ---- URL tab ---- */}
-        <TabsContent value="url">
-          <form onSubmit={handleUrlSubmit} className="flex flex-col gap-4">
-            <div className="flex min-h-[240px] flex-col justify-center gap-4 rounded-lg border-2 border-dashed border-border/50 bg-background p-6">
-              <div className="flex flex-col items-center gap-3">
-                <Globe className="h-10 w-10 text-muted-foreground" />
-                <div className="text-center">
-                  <p className="text-sm font-medium text-foreground">
-                    {t.analyze.urlLabel}
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    {t.analyze.urlHint}
-                  </p>
-                </div>
-              </div>
-              <div className="mx-auto w-full max-w-lg">
-                <Input
-                  type="url"
-                  placeholder={t.analyze.urlPlaceholder}
-                  value={url}
-                  onChange={(e) => setUrl(e.target.value)}
-                  className="bg-card"
-                />
-              </div>
-            </div>
-            <Button
-              type="submit"
-              disabled={isAnalyzing || !url.trim()}
-              className="self-end gap-2"
-            >
-              {isAnalyzing ? (
-                <>
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  {t.analyze.analyzing}
-                </>
-              ) : (
-                t.analyze.analyzeUrl
-              )}
-            </Button>
-          </form>
-        </TabsContent>
-      </Tabs>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept={ACCEPTED_FILE_EXTENSIONS}
+            onChange={handleFileChange}
+            className="hidden"
+          />
+        </div>
+
+        {/* Footer */}
+        <div className="flex items-center justify-between">
+          <div className="text-xs text-muted-foreground">
+            {!hasAttachment && (
+              <>
+                <span>
+                  {wordCount} {t.analyze.words} / {charCount} {t.analyze.characters}
+                </span>
+                <span className="mx-2">|</span>
+                <span>
+                  {t.analyze.minChars} {MIN_TEXT_LENGTH} {t.analyze.chars}
+                </span>
+              </>
+            )}
+            {hasAttachment && attachmentType === "file" && (
+              <span>{t.analyze.fileAttached}</span>
+            )}
+            {hasAttachment && attachmentType === "url" && (
+              <span>{t.analyze.urlAttached}</span>
+            )}
+          </div>
+          <Button type="submit" disabled={!canSubmit} className="gap-2">
+            {isAnalyzing ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                {t.analyze.analyzing}
+              </>
+            ) : (
+              t.analyze.analyzeBtn
+            )}
+          </Button>
+        </div>
+      </form>
     </div>
   );
 }
