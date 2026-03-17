@@ -38,8 +38,8 @@ export function DashboardSidebar() {
   }
 
   return (
-    <aside className="flex h-screen w-64 flex-col border-r border-border/50 bg-card">
-      <Link href={ROUTES.HOME} className="flex items-center gap-2 border-b border-border/50 px-6 py-5">
+    <aside className="flex h-screen w-64 flex-col border-r border-sidebar-border bg-sidebar">
+      <Link href={ROUTES.HOME} className="flex items-center gap-2 border-b border-sidebar-border px-6 py-5">
         <Shield className="h-6 w-6 text-primary" />
         <span className="text-lg font-semibold text-foreground">
           LangProof AI
@@ -69,7 +69,7 @@ export function DashboardSidebar() {
         </div>
       </nav>
 
-      <div className="border-t border-border/50 px-3 py-4">
+      <div className="border-t border-sidebar-border px-3 py-4">
         {user && (
           <div className="mb-3 px-3">
             <p className="truncate text-sm font-medium text-foreground">

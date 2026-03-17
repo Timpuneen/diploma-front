@@ -141,7 +141,7 @@ export function TextInputForm({
       charCount >= MIN_TEXT_LENGTH);
 
   return (
-    <div className="rounded-xl border border-border/50 bg-card p-6">
+    <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
       <div className="mb-6 flex items-center justify-between">
         <div>
           <h2 className="text-lg font-semibold text-foreground">
@@ -171,7 +171,7 @@ export function TextInputForm({
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         {/* Attachment display */}
         {attachmentType === "file" && selectedFile && (
-          <div className="flex items-center gap-3 rounded-lg border border-border/50 bg-background p-3">
+          <div className="flex items-center gap-3 rounded-lg border border-border bg-muted/50 p-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
               <FileText className="h-5 w-5 text-primary" />
             </div>
@@ -197,7 +197,7 @@ export function TextInputForm({
         )}
 
         {attachmentType === "url" && (
-          <div className="flex items-center gap-3 rounded-lg border border-border/50 bg-background p-3">
+          <div className="flex items-center gap-3 rounded-lg border border-border bg-muted/50 p-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
               <Link2 className="h-5 w-5 text-primary" />
             </div>

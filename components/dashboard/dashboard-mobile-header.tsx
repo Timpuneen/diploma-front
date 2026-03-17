@@ -48,7 +48,7 @@ export function DashboardMobileHeader() {
   }
 
   return (
-    <header className="flex items-center justify-between border-b border-border/50 bg-card px-4 py-3 lg:hidden">
+    <header className="flex items-center justify-between border-b border-sidebar-border bg-sidebar px-4 py-3 lg:hidden">
       <Link href={ROUTES.HOME} className="flex items-center gap-2">
         <Shield className="h-5 w-5 text-primary" />
         <span className="font-semibold text-foreground">LangProof AI</span>
@@ -61,9 +61,9 @@ export function DashboardMobileHeader() {
             <span className="sr-only">Open menu</span>
           </Button>
         </SheetTrigger>
-        <SheetContent side="left" className="w-64 bg-card p-0">
+        <SheetContent side="left" className="w-64 bg-sidebar p-0">
           <SheetTitle className="sr-only">Navigation</SheetTitle>
-          <div className="flex items-center gap-2 border-b border-border/50 px-6 py-5">
+          <div className="flex items-center gap-2 border-b border-sidebar-border px-6 py-5">
             <Shield className="h-6 w-6 text-primary" />
             <span className="text-lg font-semibold text-foreground">
               LangProof AI
@@ -92,7 +92,7 @@ export function DashboardMobileHeader() {
               })}
             </div>
           </nav>
-          <div className="border-t border-border/50 px-3 py-4">
+          <div className="border-t border-sidebar-border px-3 py-4">
             {user && (
               <div className="mb-3 px-3">
                 <p className="truncate text-sm font-medium text-foreground">
