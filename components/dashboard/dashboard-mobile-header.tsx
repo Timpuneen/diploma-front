@@ -48,7 +48,7 @@ export function DashboardMobileHeader() {
   }
 
   return (
-    <header className="flex items-center justify-between border-b border-sidebar-border bg-sidebar px-4 py-3 lg:hidden">
+    <header className="flex items-center justify-between border-b border-sidebar-border/50 bg-sidebar/80 px-4 py-3 backdrop-blur-sm lg:hidden">
       <Link href={ROUTES.HOME} className="flex items-center gap-2">
         <Shield className="h-5 w-5 text-primary" />
         <span className="font-semibold text-foreground">LangProof AI</span>
@@ -61,7 +61,7 @@ export function DashboardMobileHeader() {
             <span className="sr-only">Open menu</span>
           </Button>
         </SheetTrigger>
-        <SheetContent side="left" className="w-64 bg-sidebar p-0">
+        <SheetContent side="left" className="w-64 bg-sidebar/95 p-0 backdrop-blur-md">
           <SheetTitle className="sr-only">Navigation</SheetTitle>
           <div className="flex items-center gap-2 border-b border-sidebar-border px-6 py-5">
             <Shield className="h-6 w-6 text-primary" />

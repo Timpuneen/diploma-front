@@ -38,7 +38,7 @@ export function DashboardSidebar() {
   }
 
   return (
-    <aside className="flex h-screen w-64 flex-col border-r border-sidebar-border bg-sidebar">
+    <aside className="flex h-screen w-64 flex-col border-r border-sidebar-border bg-sidebar/80 backdrop-blur-sm">
       <Link href={ROUTES.HOME} className="flex items-center gap-2 border-b border-sidebar-border px-6 py-5">
         <Shield className="h-6 w-6 text-primary" />
         <span className="text-lg font-semibold text-foreground">

@@ -35,7 +35,7 @@ export function AnalysisProgress() {
   }, []);
 
   return (
-    <div className="flex flex-col items-center gap-6 rounded-xl border border-border/50 bg-card p-12">
+    <div className="flex flex-col items-center gap-6 rounded-xl border border-border/50 bg-card/80 p-12 backdrop-blur-sm">
       <Loader2 className="h-12 w-12 animate-spin text-primary" />
       <div className="w-full max-w-md">
         <Progress value={progress} className="h-2" />

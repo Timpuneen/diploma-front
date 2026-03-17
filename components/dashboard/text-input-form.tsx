@@ -141,7 +141,7 @@ export function TextInputForm({
       charCount >= MIN_TEXT_LENGTH);
 
   return (
-    <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
+    <div className="rounded-xl border border-border/50 bg-card/80 p-6 shadow-sm backdrop-blur-sm">
       <div className="mb-6 flex items-center justify-between">
         <div>
           <h2 className="text-lg font-semibold text-foreground">
