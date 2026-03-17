@@ -176,6 +176,13 @@ export const ru = {
     russian: "Русский",
     kazakh: "Казахский",
     english: "Английский",
+    addAttachment: "Добавить вложение",
+    attachFile: "Прикрепить файл",
+    attachUrl: "Прикрепить ссылку",
+    attachmentAddedHint: "Вложение добавлено. Нажмите анализировать.",
+    fileAttached: "Файл прикреплён",
+    urlAttached: "Ссылка прикреплена",
+    analyzeBtn: "Анализировать",
   },
 
   // Dashboard - Analysis Progress

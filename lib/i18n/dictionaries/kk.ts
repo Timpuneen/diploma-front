@@ -178,6 +178,13 @@ export const kk: Dictionary = {
     russian: "Орысша",
     kazakh: "Қазақша",
     english: "Ағылшынша",
+    addAttachment: "Тіркеме қосу",
+    attachFile: "Файл тіркеу",
+    attachUrl: "Сілтеме тіркеу",
+    attachmentAddedHint: "Тіркеме қосылды. Талдауды басыңыз.",
+    fileAttached: "Файл тіркелді",
+    urlAttached: "Сілтеме тіркелді",
+    analyzeBtn: "Талдау",
   },
 
   // Dashboard - Analysis Progress
