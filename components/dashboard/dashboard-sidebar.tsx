@@ -39,9 +39,9 @@ export function DashboardSidebar() {
 
   return (
     <aside className="flex h-screen w-64 flex-col border-r border-border/50 bg-card">
-      <Link href={ROUTES.HOME} className="flex items-center gap-2 border-b border-border/50 px-6 py-5">
+      <Link href={ROUTES.HOME} className="flex items-center gap-2 border-b border-border/50 px-6 py-5 transition-colors hover:bg-primary/5">
         <Shield className="h-6 w-6 text-primary" />
-        <span className="text-lg font-semibold text-foreground">
+        <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-lg font-semibold text-transparent">
           LangProof AI
         </span>
       </Link>
@@ -55,10 +55,10 @@ export function DashboardSidebar() {
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
+                  "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200",
                   isActive
-                    ? "bg-primary/10 text-primary"
-                    : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+                    ? "bg-gradient-to-r from-primary/15 to-accent/10 text-primary border-l-2 border-primary"
+                    : "text-muted-foreground hover:bg-primary/5 hover:text-foreground"
                 )}
               >
                 <item.icon className="h-4 w-4" />

@@ -38,24 +38,27 @@ export function AnalysisResults({ result, onReset }: AnalysisResultsProps) {
         return {
           label: t.results.aiGenerated,
           color: "text-destructive",
-          bgColor: "bg-destructive/10",
-          borderColor: "border-destructive/30",
+          bgColor: "bg-destructive/15",
+          borderColor: "border-destructive/40",
+          shadowColor: "shadow-destructive/10",
           icon: AlertTriangle,
         };
       case "human":
         return {
           label: t.results.humanWritten,
-          color: "text-primary",
-          bgColor: "bg-primary/10",
-          borderColor: "border-primary/30",
+          color: "text-accent",
+          bgColor: "bg-accent/15",
+          borderColor: "border-accent/40",
+          shadowColor: "shadow-accent/10",
           icon: CheckCircle,
         };
       case "mixed":
         return {
           label: t.results.mixedContent,
           color: "text-[hsl(var(--warning))]",
-          bgColor: "bg-[hsl(var(--warning))]/10",
-          borderColor: "border-[hsl(var(--warning))]/30",
+          bgColor: "bg-[hsl(var(--warning))]/15",
+          borderColor: "border-[hsl(var(--warning))]/40",
+          shadowColor: "shadow-[hsl(var(--warning))]/10",
           icon: HelpCircle,
         };
     }
@@ -67,7 +70,7 @@ export function AnalysisResults({ result, onReset }: AnalysisResultsProps) {
   return (
     <div className="flex flex-col gap-6">
       {/* Verdict card */}
-      <Card className={`${verdict.borderColor} border`}>
+      <Card className={`${verdict.borderColor} border shadow-lg ${verdict.shadowColor}`}>
         <CardContent className="flex flex-col items-center gap-4 py-8 sm:flex-row sm:justify-between">
           <div className="flex items-center gap-4">
             <div
@@ -111,13 +114,13 @@ export function AnalysisResults({ result, onReset }: AnalysisResultsProps) {
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center justify-between text-sm">
               <span>{t.results.humanProbability}</span>
-              <span className="text-primary">{result.humanProbability}%</span>
+              <span className="text-accent">{result.humanProbability}%</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
             <Progress
               value={result.humanProbability}
-              className="h-3 [&>div]:bg-primary"
+              className="h-3 [&>div]:bg-accent"
             />
           </CardContent>
         </Card>
@@ -191,9 +194,9 @@ interface MetricCardProps {
 
 function MetricCard({ icon: Icon, label, value, description }: MetricCardProps) {
   return (
-    <div className="flex flex-col gap-2 rounded-lg border border-border/50 p-4">
+    <div className="group flex flex-col gap-2 rounded-lg border border-border/50 p-4 transition-all duration-300 hover:border-primary/30 hover:shadow-md hover:shadow-primary/5">
       <div className="flex items-center gap-2">
-        <Icon className="h-4 w-4 text-primary" />
+        <Icon className="h-4 w-4 text-primary transition-colors group-hover:text-accent" />
         <span className="text-xs font-medium text-muted-foreground">
           {label}
         </span>

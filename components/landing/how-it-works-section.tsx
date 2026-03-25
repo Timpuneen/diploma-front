@@ -46,13 +46,13 @@ export function HowItWorksSection() {
 
         <div className="mx-auto mt-16 grid max-w-4xl gap-8 md:grid-cols-3">
           {STEPS.map((step, i) => (
-            <div key={step.step} className="relative text-center">
+            <div key={step.step} className="group relative text-center">
               {i < STEPS.length - 1 && (
-                <div className="absolute right-0 top-12 hidden h-px w-full translate-x-1/2 bg-border md:block" />
+                <div className="absolute right-0 top-12 hidden h-px w-full translate-x-1/2 bg-gradient-to-r from-primary/50 to-accent/50 md:block" />
               )}
-              <div className="relative mx-auto flex h-24 w-24 items-center justify-center rounded-2xl border border-border/50 bg-card">
-                <step.icon className="h-8 w-8 text-primary" />
-                <span className="absolute -right-2 -top-2 flex h-7 w-7 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
+              <div className="relative mx-auto flex h-24 w-24 items-center justify-center rounded-2xl border border-border/50 bg-card transition-all duration-300 group-hover:border-primary/50 group-hover:shadow-lg group-hover:shadow-primary/10">
+                <step.icon className="h-8 w-8 text-primary transition-colors group-hover:text-accent" />
+                <span className="absolute -right-2 -top-2 flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-primary to-accent text-xs font-bold text-primary-foreground">
                   {step.step}
                 </span>
               </div>

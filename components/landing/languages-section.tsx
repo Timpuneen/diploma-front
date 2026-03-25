@@ -42,16 +42,16 @@ export function LanguagesSection() {
           {LANGUAGES.map((lang) => (
             <Card
               key={lang.code}
-              className="border-border/50 bg-card transition-colors hover:border-primary/30"
+              className="group border-border/50 bg-card transition-all duration-300 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5"
             >
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between">
-                  <span className="text-3xl font-bold text-primary">
+                  <span className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
                     {lang.code}
                   </span>
                   <Badge
                     variant="outline"
-                    className="border-primary/30 text-primary"
+                    className="border-accent/50 bg-accent/10 text-accent"
                   >
                     {lang.status}
                   </Badge>

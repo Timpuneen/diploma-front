@@ -16,12 +16,12 @@ export function HeroSection() {
 
   return (
     <section className="relative flex min-h-screen items-center justify-center overflow-hidden px-6 pt-20">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,hsl(160_84%_39%/0.08),transparent_70%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,hsl(217_91%_60%/0.15),transparent_50%),radial-gradient(ellipse_at_bottom_right,hsl(175_85%_50%/0.1),transparent_50%)]" />
 
       <div className="relative z-10 mx-auto max-w-4xl text-center">
         <Badge
           variant="outline"
-          className="mb-6 border-primary/30 bg-primary/5 text-primary"
+          className="mb-6 border-accent/40 bg-accent/10 text-accent"
         >
           <Sparkles className="mr-1.5 h-3 w-3" />
           {t.hero.badge}
@@ -54,8 +54,8 @@ export function HeroSection() {
             { value: "2", label: t.hero.languagesCount },
             { value: "<2s", label: t.hero.analysisTime },
           ].map((stat) => (
-            <div key={stat.label}>
-              <p className="text-2xl font-bold text-foreground sm:text-3xl">
+            <div key={stat.label} className="group">
+              <p className="text-2xl font-bold text-primary transition-colors group-hover:text-accent sm:text-3xl">
                 {stat.value}
               </p>
               <p className="mt-1 text-sm text-muted-foreground">{stat.label}</p>
