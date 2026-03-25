@@ -201,14 +201,17 @@ export function TextInputForm({
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
               <Link2 className="h-5 w-5 text-primary" />
             </div>
-            <div className="flex-1 min-w-0">
+            <div className="flex-1 min-w-0 relative">
               <Input
                 type="url"
                 placeholder={t.analyze.urlPlaceholder}
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
-                className="border-0 bg-transparent p-0 text-sm focus-visible:ring-0"
+                className="border-0 bg-transparent p-0 text-sm focus-visible:ring-0 peer"
               />
+              <div className="absolute bottom-0 left-0 h-px w-full bg-border">
+                <div className="h-full w-0 bg-foreground/50 transition-all duration-300 ease-out peer-focus:w-full" />
+              </div>
             </div>
             <Button
               type="button"
