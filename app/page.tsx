@@ -8,6 +8,7 @@ import { FeaturesSection } from "@/components/landing/features-section";
 import { HowItWorksSection } from "@/components/landing/how-it-works-section";
 import { LanguagesSection } from "@/components/landing/languages-section";
 import { Footer } from "@/components/landing/footer";
+import { ScrollToTop } from "@/components/landing/scroll-to-top";
 
 export default function HomePage() {
   return (
@@ -18,6 +19,7 @@ export default function HomePage() {
       <HowItWorksSection />
       <LanguagesSection />
       <Footer />
+      <ScrollToTop />
     </main>
   );
 }
