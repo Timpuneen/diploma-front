@@ -82,11 +82,14 @@ export function DashboardSidebar({ collapsed = false, onToggle }: DashboardSideb
             )}
           >
             <Shield className="h-6 w-6 shrink-0 text-primary" />
-            {!collapsed && (
-              <span className="text-lg font-semibold text-foreground">
-                LangProof AI
-              </span>
-            )}
+            <span 
+              className={cn(
+                "text-lg font-semibold text-foreground transition-all duration-300 whitespace-nowrap overflow-hidden",
+                collapsed ? "w-0 opacity-0" : "w-auto opacity-100"
+              )}
+            >
+              LangProof AI
+            </span>
           </Link>
         </div>
 
@@ -107,7 +110,14 @@ export function DashboardSidebar({ collapsed = false, onToggle }: DashboardSideb
                   )}
                 >
                   <item.icon className="h-4 w-4 shrink-0" />
-                  {!collapsed && item.label}
+                  <span
+                    className={cn(
+                      "transition-all duration-300 whitespace-nowrap overflow-hidden",
+                      collapsed ? "w-0 opacity-0" : "w-auto opacity-100"
+                    )}
+                  >
+                    {item.label}
+                  </span>
                 </Link>
               );
 
@@ -126,8 +136,13 @@ export function DashboardSidebar({ collapsed = false, onToggle }: DashboardSideb
         </nav>
 
         <div className="border-t border-border/50 px-3 py-4">
-          {user && !collapsed && (
-            <div className="mb-3 px-3">
+          {user && (
+            <div 
+              className={cn(
+                "mb-3 px-3 transition-all duration-300 overflow-hidden",
+                collapsed ? "h-0 opacity-0" : "h-auto opacity-100"
+              )}
+            >
               <p className="truncate text-sm font-medium text-foreground">
                 {user.username}
               </p>
@@ -157,8 +172,15 @@ export function DashboardSidebar({ collapsed = false, onToggle }: DashboardSideb
                 className="flex-1 justify-start gap-3 text-muted-foreground hover:text-foreground"
                 onClick={handleLogout}
               >
-                <LogOut className="h-4 w-4" />
-                {t.sidebar.signOut}
+                <LogOut className="h-4 w-4 shrink-0" />
+                <span
+                  className={cn(
+                    "transition-all duration-300 whitespace-nowrap overflow-hidden",
+                    collapsed ? "w-0 opacity-0" : "w-auto opacity-100"
+                  )}
+                >
+                  {t.sidebar.signOut}
+                </span>
               </Button>
             )}
             {!collapsed && (
