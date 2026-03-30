@@ -2,7 +2,7 @@
 
 /**
  * Dashboard sidebar navigation with route links and user info.
- * Collapsible sidebar with toggle button.
+ * Collapsible sidebar with toggle button in header.
  */
 
 import Link from "next/link";
@@ -25,8 +25,8 @@ import {
   History,
   UserCircle,
   LogOut,
-  PanelLeftClose,
-  PanelLeft,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 
 interface DashboardSidebarProps {
@@ -55,11 +55,25 @@ export function DashboardSidebar({ collapsed = false, onToggle }: DashboardSideb
     <TooltipProvider delayDuration={0}>
       <aside
         className={cn(
-          "flex h-screen flex-col border-r border-border/50 bg-card transition-all duration-300",
+          "relative flex h-screen flex-col border-r border-border/50 bg-card transition-all duration-300",
           collapsed ? "w-16" : "w-64"
         )}
       >
-        <div className="flex items-center justify-between border-b border-border/50 px-3 py-5">
+        {/* Toggle button - positioned on the edge */}
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={onToggle}
+          className="absolute -right-3 top-7 z-10 h-6 w-6 rounded-full border-border/50 bg-card shadow-sm hover:bg-secondary"
+        >
+          {collapsed ? (
+            <ChevronRight className="h-3 w-3" />
+          ) : (
+            <ChevronLeft className="h-3 w-3" />
+          )}
+        </Button>
+
+        <div className="flex items-center border-b border-border/50 px-3 py-5">
           <Link
             href={ROUTES.HOME}
             className={cn(
@@ -154,22 +168,6 @@ export function DashboardSidebar({ collapsed = false, onToggle }: DashboardSideb
               />
             )}
           </div>
-          
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={onToggle}
-            className={cn(
-              "mt-3 w-full text-muted-foreground hover:text-foreground",
-              collapsed && "justify-center"
-            )}
-          >
-            {collapsed ? (
-              <PanelLeft className="h-4 w-4" />
-            ) : (
-              <PanelLeftClose className="h-4 w-4" />
-            )}
-          </Button>
         </div>
       </aside>
     </TooltipProvider>
