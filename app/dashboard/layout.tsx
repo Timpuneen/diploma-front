@@ -1,9 +1,10 @@
 "use client";
 
 /**
- * Dashboard layout with auth protection, sidebar, and mobile header.
+ * Dashboard layout with auth protection, collapsible sidebar, and mobile header.
  */
 
+import { useState } from "react";
 import type { ReactNode } from "react";
 import { AuthGuard } from "@/components/auth-guard";
 import { DashboardSidebar } from "@/components/dashboard/dashboard-sidebar";
@@ -14,11 +15,16 @@ interface DashboardLayoutProps {
 }
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+
   return (
     <AuthGuard>
       <div className="flex h-screen">
         <div className="hidden lg:block">
-          <DashboardSidebar />
+          <DashboardSidebar
+            collapsed={sidebarCollapsed}
+            onToggle={() => setSidebarCollapsed(!sidebarCollapsed)}
+          />
         </div>
         <div className="flex flex-1 flex-col overflow-hidden">
           <DashboardMobileHeader />
