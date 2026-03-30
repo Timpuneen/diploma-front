@@ -64,7 +64,7 @@ export function DashboardSidebar({ collapsed = false, onToggle }: DashboardSideb
           variant="outline"
           size="icon"
           onClick={onToggle}
-          className="absolute -right-3 top-7 z-10 h-6 w-6 rounded-full border-border/50 bg-card shadow-sm hover:bg-secondary"
+          className="absolute -right-3 top-1/2 -translate-y-1/2 z-10 h-6 w-6 rounded-full border-border/50 bg-card shadow-sm hover:bg-secondary"
         >
           {collapsed ? (
             <ChevronRight className="h-3 w-3" />
