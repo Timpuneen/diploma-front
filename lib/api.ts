@@ -162,10 +162,10 @@ class ApiClient {
 
   // ---- AI Detection ----
 
-  async detectText(text: string): Promise<{ result: AnalysisResult; limits: UserLimits }> {
+  async detectText(text: string, language: string = "auto"): Promise<{ result: AnalysisResult; limits: UserLimits }> {
     const res = await this.request<AIDetectionWithLimitsResponse>("/ai-detection/detect-text", {
       method: "POST",
-      body: JSON.stringify({ text }),
+      body: JSON.stringify({ text, language }),
     });
     return {
       result: mapDetectionToAnalysisResult(res, text),
@@ -173,9 +173,10 @@ class ApiClient {
     };
   }
 
-  async detectFile(file: File): Promise<{ result: AnalysisResult; limits: UserLimits }> {
+  async detectFile(file: File, language: string = "auto"): Promise<{ result: AnalysisResult; limits: UserLimits }> {
     const formData = new FormData();
     formData.append("file", file);
+    formData.append("language", language); 
 
     const token = this.getToken();
     const headers: HeadersInit = {};

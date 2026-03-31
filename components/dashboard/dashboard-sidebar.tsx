@@ -102,22 +102,19 @@ export function DashboardSidebar({ collapsed = false, onToggle }: DashboardSideb
                   key={item.href}
                   href={item.href}
                   className={cn(
-                    "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
+                    "flex items-center rounded-lg py-2.5 text-sm font-medium transition-colors",
                     isActive
                       ? "bg-primary/10 text-primary"
                       : "text-muted-foreground hover:bg-secondary hover:text-foreground",
-                    collapsed && "justify-center px-2"
+                    collapsed ? "justify-center px-2.5" : "gap-3 px-3"
                   )}
                 >
                   <item.icon className="h-4 w-4 shrink-0" />
-                  <span
-                    className={cn(
-                      "transition-all duration-300 whitespace-nowrap overflow-hidden",
-                      collapsed ? "w-0 opacity-0" : "w-auto opacity-100"
-                    )}
-                  >
-                    {item.label}
-                  </span>
+                  {!collapsed && (
+                    <span className="whitespace-nowrap">
+                      {item.label}
+                    </span>
+                  )}
                 </Link>
               );
 

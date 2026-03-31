@@ -19,10 +19,10 @@ export default function AnalyzePage() {
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const { t } = useLocale();
 
-  const handleAnalyze = useCallback(async (text: string, _language: string) => {
+  const handleAnalyze = useCallback(async (text: string, language: string) => {
     setStatus("analyzing");
     try {
-      const { result: analysisResult } = await apiClient.detectText(text);
+      const { result: analysisResult } = await apiClient.detectText(text, language);
       setResult(analysisResult);
       setStatus("complete");
     } catch (err) {
@@ -32,10 +32,10 @@ export default function AnalyzePage() {
     }
   }, [t]);
 
-  const handleFileAnalyze = useCallback(async (file: File, _language: string) => {
+  const handleFileAnalyze = useCallback(async (file: File, language: string) => {
     setStatus("uploading");
     try {
-      const { result: analysisResult } = await apiClient.detectFile(file);
+      const { result: analysisResult } = await apiClient.detectFile(file, language);
       setResult(analysisResult);
       setStatus("complete");
     } catch (err) {
