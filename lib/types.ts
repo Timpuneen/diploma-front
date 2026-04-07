@@ -54,7 +54,16 @@ export interface UserLimits {
   monthly_reset_at: string;
   total_requests: number;
   is_premium: boolean;
+  plan_type: string;
   can_make_request: boolean;
+}
+
+export interface SubscriptionStatus {
+  is_premium: boolean;
+  status: string | null;
+  plan_type: string | null;
+  current_period_end: string | null;
+  cancel_at_period_end: boolean | null;
 }
 
 export interface AIDetectionWithLimitsResponse extends AIDetectionResponse {

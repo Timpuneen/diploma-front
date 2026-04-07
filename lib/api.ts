@@ -14,6 +14,7 @@ import type {
   DetectionHistoryResponse,
   LoginCredentials,
   RegisterCredentials,
+  SubscriptionStatus,
   TelegramConnectResponse,
   TelegramStatusResponse,
   User,
@@ -255,6 +256,20 @@ class ApiClient {
 
   async disconnectTelegram(): Promise<{ message: string }> {
     return this.request("/telegram/disconnect", { method: "DELETE" });
+  }
+
+  // ---- Billing ----
+
+  async getSubscriptionStatus(): Promise<SubscriptionStatus> {
+    return this.request<SubscriptionStatus>("/billing/subscription");
+  }
+
+  async createCheckoutSession(): Promise<{ url: string }> {
+    return this.request<{ url: string }>("/billing/checkout", { method: "POST" });
+  }
+
+  async createPortalSession(): Promise<{ url: string }> {
+    return this.request<{ url: string }>("/billing/portal", { method: "POST" });
   }
 }
 

@@ -38,6 +38,9 @@ export const ROUTES = {
   RESULTS: "/dashboard/results",
   PROFILE: "/dashboard/profile",
   HISTORY: "/dashboard/history",
+  BILLING: "/dashboard/billing",
+  BILLING_SUCCESS: "/dashboard/billing/success",
+  BILLING_CANCEL: "/dashboard/billing/cancel",
 } as const;
 
 export const AUTH_TOKEN_KEY = "auth_token";
