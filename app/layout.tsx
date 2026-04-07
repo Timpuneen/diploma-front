@@ -4,6 +4,7 @@ import { Inter, JetBrains_Mono } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import { LocaleProvider } from "@/lib/i18n/locale-context";
 import { AuthProvider } from "@/lib/auth-context";
+import { ThemeProvider } from "@/components/theme-provider";
 
 import "./globals.css";
 
@@ -32,14 +33,21 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ru">
+    <html lang="ru" suppressHydrationWarning>
       <body className="font-sans antialiased min-h-screen">
-        <AuthProvider>
-          <LocaleProvider>
-            {children}
-            <Toaster />
-          </LocaleProvider>
-        </AuthProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem={false}
+          storageKey="langproof-theme"
+        >
+          <AuthProvider>
+            <LocaleProvider>
+              {children}
+              <Toaster />
+            </LocaleProvider>
+          </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

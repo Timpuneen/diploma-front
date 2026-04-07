@@ -7,6 +7,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/auth-context";
 import { ROUTES } from "@/lib/constants";
@@ -27,6 +28,8 @@ import {
   LogOut,
   ChevronLeft,
   ChevronRight,
+  Sun,
+  Moon,
 } from "lucide-react";
 
 interface DashboardSidebarProps {
@@ -39,6 +42,11 @@ export function DashboardSidebar({ collapsed = false, onToggle }: DashboardSideb
   const router = useRouter();
   const { user, logout } = useAuth();
   const { t } = useLocale();
+  const { theme, setTheme } = useTheme();
+
+  function toggleTheme() {
+    setTheme(theme === "dark" ? "light" : "dark");
+  }
 
   const NAV_ITEMS = [
     { href: ROUTES.ANALYZE, label: t.sidebar.analyzeText, icon: FileSearch },
@@ -150,19 +158,40 @@ export function DashboardSidebar({ collapsed = false, onToggle }: DashboardSideb
           )}
           <div className={cn("flex items-center gap-2", collapsed && "flex-col")}>
             {collapsed ? (
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="text-muted-foreground hover:text-foreground"
-                    onClick={handleLogout}
-                  >
-                    <LogOut className="h-4 w-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent side="right">{t.sidebar.signOut}</TooltipContent>
-              </Tooltip>
+              <>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="text-muted-foreground hover:text-foreground"
+                      onClick={handleLogout}
+                    >
+                      <LogOut className="h-4 w-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="right">{t.sidebar.signOut}</TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="text-muted-foreground hover:text-foreground"
+                      onClick={toggleTheme}
+                    >
+                      {theme === "dark" ? (
+                        <Sun className="h-4 w-4" />
+                      ) : (
+                        <Moon className="h-4 w-4" />
+                      )}
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="right">
+                    {theme === "dark" ? t.sidebar.lightTheme : t.sidebar.darkTheme}
+                  </TooltipContent>
+                </Tooltip>
+              </>
             ) : (
               <Button
                 variant="ghost"
@@ -181,10 +210,31 @@ export function DashboardSidebar({ collapsed = false, onToggle }: DashboardSideb
               </Button>
             )}
             {!collapsed && (
-              <LanguageSwitcher
-                variant="ghost"
-                className="text-muted-foreground hover:text-foreground"
-              />
+              <>
+                <LanguageSwitcher
+                  variant="ghost"
+                  className="text-muted-foreground hover:text-foreground"
+                />
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="text-muted-foreground hover:text-foreground"
+                      onClick={toggleTheme}
+                    >
+                      {theme === "dark" ? (
+                        <Sun className="h-4 w-4" />
+                      ) : (
+                        <Moon className="h-4 w-4" />
+                      )}
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="top">
+                    {theme === "dark" ? t.sidebar.lightTheme : t.sidebar.darkTheme}
+                  </TooltipContent>
+                </Tooltip>
+              </>
             )}
           </div>
         </div>

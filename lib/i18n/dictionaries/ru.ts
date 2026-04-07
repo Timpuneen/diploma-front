@@ -135,6 +135,8 @@ export const ru = {
     history: "История",
     profile: "Профиль",
     signOut: "Выйти",
+    lightTheme: "Светлая тема",
+    darkTheme: "Темная тема",
   },
 
   // Dashboard - Analyze page

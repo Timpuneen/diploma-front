@@ -7,7 +7,7 @@ import React from "react";
  * Validates input and triggers analysis via callback.
  */
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useRef, useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
@@ -51,13 +51,23 @@ export function TextInputForm({
   isAnalyzing,
 }: TextInputFormProps) {
   const [text, setText] = useState("");
-  const [language, setLanguage] = useState("auto");
+  const [language, setLanguage] = useState(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("langproof-analysis-language") || "auto";
+    }
+    return "auto";
+  });
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [url, setUrl] = useState("");
   const [attachmentType, setAttachmentType] = useState<AttachmentType>(null);
   const [popoverOpen, setPopoverOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { t } = useLocale();
+
+  // Save language preference to localStorage
+  useEffect(() => {
+    localStorage.setItem("langproof-analysis-language", language);
+  }, [language]);
 
   const wordCount = text.trim() ? text.trim().split(/\s+/).length : 0;
   const charCount = text.length;

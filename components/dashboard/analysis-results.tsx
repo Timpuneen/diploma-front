@@ -17,7 +17,6 @@ import {
   AlertTriangle,
   CheckCircle,
   HelpCircle,
-  RotateCcw,
   Maximize2,
   Minimize2,
 } from "lucide-react";
@@ -153,11 +152,6 @@ export function AnalysisResults({ result, onReset }: AnalysisResultsProps) {
           </div>
         </CardContent>
       </Card>
-
-      <Button onClick={onReset} variant="outline" className="gap-2 self-center bg-transparent">
-        <RotateCcw className="h-4 w-4" />
-        {t.results.analyzeAnother}
-      </Button>
     </div>
   );
 }

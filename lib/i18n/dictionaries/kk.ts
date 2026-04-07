@@ -137,6 +137,8 @@ export const kk: Dictionary = {
     history: "Тарих",
     profile: "Профиль",
     signOut: "Шығу",
+    lightTheme: "Жарық тақырып",
+    darkTheme: "Қараңғы тақырып",
   },
 
   // Dashboard - Analyze page

@@ -16,7 +16,8 @@ export function HeroSection() {
 
   return (
     <section className="relative flex min-h-screen items-center justify-center overflow-hidden px-6 pt-20">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,hsl(0_0%_100%/0.06),transparent_70%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,hsl(0_0%_100%/0.06),transparent_70%)] dark:block hidden" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,hsl(30_35%_22%/0.12),transparent_60%)] dark:hidden block" />
 
       <div className="relative z-10 mx-auto max-w-4xl text-center">
         <Badge

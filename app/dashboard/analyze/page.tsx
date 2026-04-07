@@ -13,6 +13,8 @@ import { AnalysisProgress } from "@/components/dashboard/analysis-progress";
 import { AnalysisResults } from "@/components/dashboard/analysis-results";
 import { useLocale } from "@/lib/i18n/locale-context";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { RotateCcw } from "lucide-react";
 
 export default function AnalyzePage() {
   const [status, setStatus] = useState<AnalysisStatus>("idle");
@@ -63,13 +65,23 @@ export default function AnalyzePage() {
     setResult(null);
   }
 
+  const showResetButton = status === "complete" && result;
+
   return (
     <div className="mx-auto max-w-4xl px-6 py-8">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-foreground">{t.analyze.title}</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          {t.analyze.subtitle}
-        </p>
+      <div className="mb-8 flex items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-foreground">{t.analyze.title}</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {t.analyze.subtitle}
+          </p>
+        </div>
+        {showResetButton && (
+          <Button onClick={handleReset} variant="outline" className="gap-2 bg-transparent shrink-0">
+            <RotateCcw className="h-4 w-4" />
+            {t.results.analyzeAnother}
+          </Button>
+        )}
       </div>
 
       {status === "idle" || status === "error" ? (
