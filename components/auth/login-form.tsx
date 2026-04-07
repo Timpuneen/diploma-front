@@ -2,11 +2,6 @@
 
 import React from "react"
 
-/**
- * Login form component with email/password fields and validation.
- * Integrates with AuthContext for authentication flow.
- */
-
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -20,24 +15,24 @@ import { toast } from "sonner";
 import { Loader2, Shield } from "lucide-react";
 
 export function LoginForm() {
-  const [username, setUsername] = useState("");
+  const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { login } = useAuth();
+  const { login: authLogin } = useAuth();
   const router = useRouter();
   const { t } = useLocale();
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
-    if (!username || !password) {
+    if (!login || !password) {
       toast.error(t.login.fillAll);
       return;
     }
 
     setIsSubmitting(true);
     try {
-      await login({ username, password });
+      await authLogin({ login, password });
       toast.success(t.login.welcomeBack);
       router.push(ROUTES.ANALYZE);
     } catch {
@@ -64,13 +59,13 @@ export function LoginForm() {
 
         <form onSubmit={handleSubmit} className="mt-8 flex flex-col gap-5">
           <div className="flex flex-col gap-2">
-            <Label htmlFor="username">{t.login.username}</Label>
+            <Label htmlFor="login">{t.login.username}</Label>
             <Input
-              id="username"
+              id="login"
               type="text"
-              placeholder={t.login.usernamePlaceholder}
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              placeholder="Username or email"
+              value={login}
+              onChange={(e) => setLogin(e.target.value)}
               autoComplete="username"
               required
             />
