@@ -80,29 +80,23 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }, []);
 
   const login = useCallback(async (credentials: LoginCredentials) => {
-    setState((prev) => ({ ...prev, isLoading: true }));
     try {
       const tokens = await apiClient.login(credentials);
       apiClient.setTokens(tokens);
-
       const user = await apiClient.getMe();
       setState({ user, isLoading: false, isAuthenticated: true });
     } catch (err) {
-      setState((prev) => ({ ...prev, isLoading: false }));
       throw err;
     }
   }, []);
 
   const register = useCallback(async (credentials: RegisterCredentials) => {
-    setState((prev) => ({ ...prev, isLoading: true }));
     try {
       const tokens = await apiClient.register(credentials);
       apiClient.setTokens(tokens);
-
       const user = await apiClient.getMe();
       setState({ user, isLoading: false, isAuthenticated: true });
     } catch (err) {
-      setState((prev) => ({ ...prev, isLoading: false }));
       throw err;
     }
   }, []);

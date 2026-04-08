@@ -129,6 +129,8 @@ export const kk: Dictionary = {
     passwordMismatch: "Құпия сөздер сәйкес келмейді",
     success: "Аккаунт сәтті жасалды!",
     failed: "Тіркелу қатесі. Қайталап көріңіз.",
+    registerUsernameHint: "3-тен 50 таңбаға дейін. Тек латын әріптері, сандар, _ және -",
+    registerPasswordHint: "Кемінде 8 таңба, бір бас әріп, бір кіші әріп, бір сан",
   },
 
   // Dashboard - Sidebar

@@ -53,14 +53,15 @@ export function RegisterForm() {
       toast.success(t.register.success);
       router.push(ROUTES.ANALYZE);
     } catch (err: unknown) {
+      setPassword("");
+      setConfirmPassword("");
+
       const apiError = err as { detail?: string | Array<{ loc?: string[]; msg?: string }> };
 
       if (apiError?.detail) {
         if (typeof apiError.detail === "string") {
-          // Single string error from backend (400 / 500)
           toast.error(apiError.detail);
         } else if (Array.isArray(apiError.detail)) {
-          // Pydantic validation errors (422) — show each one
           for (const item of apiError.detail) {
             const field = item.loc?.slice(-1)[0] ?? "";
             const msg = item.msg ?? "";
@@ -104,6 +105,9 @@ export function RegisterForm() {
               autoComplete="username"
               required
             />
+            <p className="text-xs text-muted-foreground">
+              {t.register.registerUsernameHint}
+            </p>
           </div>
 
           <div className="flex flex-col gap-2">
@@ -131,6 +135,9 @@ export function RegisterForm() {
               required
               minLength={8}
             />
+            <p className="text-xs text-muted-foreground">
+              {t.register.registerPasswordHint}
+            </p>
           </div>
 
           <div className="flex flex-col gap-2">

@@ -127,6 +127,8 @@ export const ru = {
     passwordMismatch: "Пароли не совпадают",
     success: "Аккаунт успешно создан!",
     failed: "Ошибка регистрации. Попробуйте снова.",
+    registerUsernameHint: "От 3 до 50 символов. Только латинские буквы, цифры, _ и -",
+    registerPasswordHint: "Минимум 8 символов, заглавная и строчная буква, цифра",
   },
 
   // Dashboard - Sidebar
