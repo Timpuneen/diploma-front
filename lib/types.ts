@@ -11,6 +11,8 @@ export interface User {
   email: string;
   is_active: boolean;
   is_verified: boolean;
+  has_password?: boolean;
+  auth_providers?: string[];
 }
 
 export interface AuthTokens {

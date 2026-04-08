@@ -229,6 +229,19 @@ class ApiClient {
     });
   }
 
+  async loginWithGoogle(payload: {
+    code: string;
+    redirect_uri: string;
+  }): Promise<AuthTokens> {
+    return this.requestPublic<AuthTokens>("/auth/google", {
+      method: "POST",
+      body: JSON.stringify({
+        code: payload.code,
+        redirect_uri: payload.redirect_uri,
+      }),
+    });
+  }
+
   // ---- AI Detection ----
 
   async detectText(text: string, language: string = "auto"): Promise<{ result: AnalysisResult; limits: UserLimits }> {

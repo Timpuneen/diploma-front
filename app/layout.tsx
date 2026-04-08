@@ -4,6 +4,7 @@ import { Inter, JetBrains_Mono } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import { LocaleProvider } from "@/lib/i18n/locale-context";
 import { AuthProvider } from "@/lib/auth-context";
+import { GoogleAuthBridge } from "@/components/auth/google-auth-bridge";
 import { ThemeProvider } from "@/components/theme-provider";
 
 import "./globals.css";
@@ -42,10 +43,12 @@ export default function RootLayout({
           storageKey="langproof-theme"
         >
           <AuthProvider>
-            <LocaleProvider>
-              {children}
-              <Toaster />
-            </LocaleProvider>
+            <GoogleAuthBridge>
+              <LocaleProvider>
+                {children}
+                <Toaster />
+              </LocaleProvider>
+            </GoogleAuthBridge>
           </AuthProvider>
         </ThemeProvider>
       </body>

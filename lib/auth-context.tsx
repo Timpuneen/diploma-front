@@ -27,6 +27,7 @@ interface AuthState {
 interface AuthContextValue extends AuthState {
   login: (credentials: LoginCredentials) => Promise<void>;
   register: (credentials: RegisterCredentials) => Promise<void>;
+  loginWithGoogle: (payload: { code: string; redirectUri: string }) => Promise<void>;
   logout: () => Promise<void>;
   updateUser: (data: Partial<User>) => void;
   refreshUser: () => Promise<void>;
@@ -103,6 +104,19 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   }, []);
 
+  const loginWithGoogle = useCallback(
+    async (payload: { code: string; redirectUri: string }) => {
+      const tokens = await apiClient.loginWithGoogle({
+        code: payload.code,
+        redirect_uri: payload.redirectUri,
+      });
+      apiClient.setTokens(tokens);
+      const user = await apiClient.getMe();
+      setState({ user, isLoading: false, isAuthenticated: true });
+    },
+    []
+  );
+
   const logout = useCallback(async () => {
     apiClient.clearTokens();
     setState({ user: null, isLoading: false, isAuthenticated: false });
@@ -135,8 +149,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }, []);
 
   const value = useMemo(
-    () => ({ ...state, login, register, logout, updateUser, refreshUser }),
-    [state, login, register, logout, updateUser, refreshUser]
+    () => ({
+      ...state,
+      login,
+      register,
+      loginWithGoogle,
+      logout,
+      updateUser,
+      refreshUser,
+    }),
+    [state, login, register, loginWithGoogle, logout, updateUser, refreshUser]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

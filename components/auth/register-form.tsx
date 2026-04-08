@@ -18,6 +18,7 @@ import { ROUTES } from "@/lib/constants";
 import { useLocale } from "@/lib/i18n/locale-context";
 import { toast } from "sonner";
 import { Loader2, Shield } from "lucide-react";
+import { GoogleSignInButton } from "@/components/auth/google-sign-in-button";
 
 export function RegisterForm() {
   const [username, setUsername] = useState("");
@@ -163,6 +164,19 @@ export function RegisterForm() {
               t.register.submit
             )}
           </Button>
+
+          {process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID?.trim() ? (
+            <div className="relative my-6">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t border-border" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-background px-2 text-muted-foreground">or</span>
+              </div>
+            </div>
+          ) : null}
+
+          <GoogleSignInButton variant="register" />
         </form>
 
         <p className="mt-8 text-center text-sm text-muted-foreground">
