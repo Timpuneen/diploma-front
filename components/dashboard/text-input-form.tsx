@@ -90,10 +90,8 @@ export function TextInputForm({
 
     // If file is attached, analyze file
     if (selectedFile) {
-      // For files we don't have the text client-side, so fall back to "ru" when auto is selected.
-      // The backend can also perform its own detection if needed.
-      const resolvedLanguage = language === "auto" ? "ru" : language;
-      onFileAnalyze(selectedFile, resolvedLanguage);
+      // For files, send "auto" as-is — backend will detect language via langdetect
+      onFileAnalyze(selectedFile, language);
       return;
     }
 
