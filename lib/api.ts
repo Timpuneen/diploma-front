@@ -47,7 +47,8 @@ function mapDetectionToAnalysisResult(
     aiProbability: res.result === "human_written" ? 100 - aiProb : aiProb,
     humanProbability: res.result === "human_written" ? aiProb : 100 - aiProb,
     verdict: mapResultToVerdict(res.result),
-    language: "auto",
+    // Use language returned by backend if available, otherwise fall back to "auto"
+    language: (res.metadata as Record<string, string>)?.language ?? "auto",
     wordCount: (res.metadata as Record<string, number>)?.word_count ?? originalText.split(/\s+/).length,
     createdAt: new Date().toISOString(),
     metrics: {
@@ -258,7 +259,7 @@ class ApiClient {
   async detectFile(file: File, language: string = "auto"): Promise<{ result: AnalysisResult; limits: UserLimits }> {
     const formData = new FormData();
     formData.append("file", file);
-    formData.append("language", language); 
+    formData.append("language", language);
 
     const token = this.getToken();
     const headers: HeadersInit = {};

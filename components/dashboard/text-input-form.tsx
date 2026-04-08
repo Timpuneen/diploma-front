@@ -34,6 +34,7 @@ import {
 import { useLocale } from "@/lib/i18n/locale-context";
 import { toast } from "sonner";
 import { Plus, FileText, Loader2, X, Globe, Link2 } from "lucide-react";
+import { detectLanguage } from "@/lib/detect-language";
 
 interface TextInputFormProps {
   onAnalyze: (text: string, language: string) => void;
@@ -74,12 +75,25 @@ export function TextInputForm({
 
   const hasAttachment = selectedFile !== null || url.trim() !== "";
 
+  /**
+   * Resolves the final language to send to the backend.
+   * If the user selected "auto", franc detects the language from the text.
+   * For file/URL attachments with "auto", falls back to "ru" since text is unavailable client-side.
+   */
+  function resolveLanguage(sourceText: string): "ru" | "kk" | string {
+    if (language !== "auto") return language;
+    return detectLanguage(sourceText);
+  }
+
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
     // If file is attached, analyze file
     if (selectedFile) {
-      onFileAnalyze(selectedFile, language);
+      // For files we don't have the text client-side, so fall back to "ru" when auto is selected.
+      // The backend can also perform its own detection if needed.
+      const resolvedLanguage = language === "auto" ? "ru" : language;
+      onFileAnalyze(selectedFile, resolvedLanguage);
       return;
     }
 
@@ -90,6 +104,7 @@ export function TextInputForm({
         toast.error(t.analyze.urlInvalid);
         return;
       }
+      // For URLs we also don't have the text client-side, pass language as-is.
       onUrlAnalyze(trimmedUrl);
       return;
     }
@@ -103,7 +118,9 @@ export function TextInputForm({
       toast.error(`${t.analyze.textTooLong} ${MAX_TEXT_LENGTH.toLocaleString()} ${t.analyze.chars}`);
       return;
     }
-    onAnalyze(text, language);
+
+    const resolvedLanguage = resolveLanguage(text);
+    onAnalyze(text, resolvedLanguage);
   }
 
   function validateAndSetFile(file: File) {
