@@ -14,9 +14,10 @@ export function simulateDelay(ms = 1500): Promise<void> {
 export function getMockUser(): User {
   return {
     id: "usr_demo_001",
+    username: "demo",
     email: "demo@aidetector.kz",
-    name: "Demo User",
-    createdAt: "2025-09-15T10:00:00Z",
+    is_active: true,
+    is_verified: true,
   };
 }
 

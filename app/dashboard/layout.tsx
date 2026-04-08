@@ -7,6 +7,7 @@
 import { useState } from "react";
 import type { ReactNode } from "react";
 import { AuthGuard } from "@/components/auth-guard";
+import { EmailVerificationBanner } from "@/components/email-verification-banner";
 import { DashboardSidebar } from "@/components/dashboard/dashboard-sidebar";
 import { DashboardMobileHeader } from "@/components/dashboard/dashboard-mobile-header";
 
@@ -27,6 +28,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           />
         </div>
         <div className="flex flex-1 flex-col overflow-hidden">
+          <EmailVerificationBanner />
           <DashboardMobileHeader />
           <main className="flex-1 overflow-y-auto">{children}</main>
         </div>

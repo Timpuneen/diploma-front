@@ -25,6 +25,7 @@ import {
   FileSearch,
   History,
   UserCircle,
+  Crown,
   LogOut,
   ChevronLeft,
   ChevronRight,
@@ -52,6 +53,7 @@ export function DashboardSidebar({ collapsed = false, onToggle }: DashboardSideb
     { href: ROUTES.ANALYZE, label: t.sidebar.analyzeText, icon: FileSearch },
     { href: ROUTES.HISTORY, label: t.sidebar.history, icon: History },
     { href: ROUTES.PROFILE, label: t.sidebar.profile, icon: UserCircle },
+    { href: ROUTES.BILLING, label: t.sidebar.billing, icon: Crown },
   ];
 
   async function handleLogout() {

@@ -16,6 +16,7 @@ import {
 } from "react";
 import type { LoginCredentials, RegisterCredentials, User } from "./types";
 import { apiClient } from "./api";
+import { AUTH_TOKEN_KEY } from "./constants";
 
 interface AuthState {
   user: User | null;
@@ -28,6 +29,7 @@ interface AuthContextValue extends AuthState {
   register: (credentials: RegisterCredentials) => Promise<void>;
   logout: () => Promise<void>;
   updateUser: (data: Partial<User>) => void;
+  refreshUser: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -113,9 +115,28 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }));
   }, []);
 
+  const refreshUser = useCallback(async () => {
+    const token = document.cookie
+      .split("; ")
+      .find((row) => row.startsWith(`${AUTH_TOKEN_KEY}=`))
+      ?.split("=")[1];
+    if (!token) return;
+    try {
+      const user = await apiClient.getMe();
+      setState((prev) => ({
+        ...prev,
+        user,
+        isAuthenticated: true,
+      }));
+    } catch {
+      apiClient.clearTokens();
+      setState({ user: null, isLoading: false, isAuthenticated: false });
+    }
+  }, []);
+
   const value = useMemo(
-    () => ({ ...state, login, register, logout, updateUser }),
-    [state, login, register, logout, updateUser]
+    () => ({ ...state, login, register, logout, updateUser, refreshUser }),
+    [state, login, register, logout, updateUser, refreshUser]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

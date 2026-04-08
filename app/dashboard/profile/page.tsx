@@ -8,11 +8,14 @@ import React from "react";
  */
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { useAuth } from "@/lib/auth-context";
 import { apiClient } from "@/lib/api";
-import type { UserLimits, TelegramStatusResponse } from "@/lib/types";
+import type { UserLimits, TelegramStatusResponse, SubscriptionStatus } from "@/lib/types";
+import { ROUTES } from "@/lib/constants";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Progress } from "@/components/ui/progress";
 import { useLocale } from "@/lib/i18n/locale-context";
@@ -22,6 +25,7 @@ import {
   Mail,
   Shield,
   BarChart3,
+  Crown,
   Loader2,
   MessageCircle,
   ExternalLink,
@@ -33,6 +37,7 @@ export default function ProfilePage() {
   const { t, locale } = useLocale();
 
   const [limits, setLimits] = useState<UserLimits | null>(null);
+  const [sub, setSub] = useState<SubscriptionStatus | null>(null);
   const [telegramStatus, setTelegramStatus] = useState<TelegramStatusResponse | null>(null);
   const [isConnectingTelegram, setIsConnectingTelegram] = useState(false);
   const [isDisconnectingTelegram, setIsDisconnectingTelegram] = useState(false);
@@ -40,6 +45,7 @@ export default function ProfilePage() {
 
   useEffect(() => {
     apiClient.getUserLimits().then(setLimits).catch(() => {});
+    apiClient.getSubscriptionStatus().then(setSub).catch(() => {});
     apiClient.getTelegramStatus().then(setTelegramStatus).catch(() => {});
   }, []);
 
@@ -121,6 +127,34 @@ export default function ProfilePage() {
               </h2>
               <p className="text-sm text-muted-foreground">{user.email}</p>
             </div>
+          </CardContent>
+        </Card>
+
+        {/* Subscription Plan */}
+        <Card className="border-border/50">
+          <CardContent className="flex items-center justify-between py-4">
+            <div className="flex items-center gap-3">
+              <Crown className="h-4 w-4 text-yellow-500" />
+              <div>
+                <p className="text-xs text-muted-foreground">
+                  {t.billing.currentPlan}
+                </p>
+                <div className="flex items-center gap-2">
+                  {sub?.is_premium ? (
+                    <Badge className="bg-yellow-500/10 text-yellow-600 border-yellow-500/30 hover:bg-yellow-500/10">
+                      {t.billing.premiumPlan}
+                    </Badge>
+                  ) : (
+                    <Badge variant="secondary">{t.billing.freePlan}</Badge>
+                  )}
+                </div>
+              </div>
+            </div>
+            <Button asChild variant="outline" size="sm">
+              <Link href={ROUTES.BILLING}>
+                {sub?.is_premium ? t.billing.manageSub : t.billing.upgrade}
+              </Link>
+            </Button>
           </CardContent>
         </Card>
 

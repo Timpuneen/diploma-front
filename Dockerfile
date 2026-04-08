@@ -21,35 +21,20 @@ RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store \
 # Copy application code
 COPY . .
 
-# Build the application
+# Build the application (standalone output configured in next.config.mjs)
 RUN pnpm build
 
-# Prune devDependencies for runtime
-RUN pnpm prune --prod
-
-# Runtime stage
-FROM node:20-alpine
+# Runtime stage -- standalone needs no node_modules or pnpm
+FROM node:20-alpine AS runner
 
 WORKDIR /app
 
-# Enable pnpm via corepack (no global installs)
-ENV PNPM_HOME=/pnpm
-ENV PATH=$PNPM_HOME:$PATH
-RUN corepack enable
-
-# Copy built application from builder
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/next.config.mjs ./
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package.json /app/pnpm-lock.yaml ./
-
-# Expose port (default Next.js port)
-EXPOSE 3000
-
-# Set environment for production
 ENV NODE_ENV=production
 
-# Start the application
-CMD ["pnpm", "start"]
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
 
+EXPOSE 3000
+
+CMD ["node", "server.js"]

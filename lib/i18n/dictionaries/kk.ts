@@ -133,11 +133,36 @@ export const kk: Dictionary = {
     registerPasswordHint: "Кемінде 8 таңба, бір бас әріп, бір кіші әріп, бір сан",
   },
 
+  verifyEmail: {
+    registerSuccess: "Поштаны тексеріңіз — растау сілтемесін жібердік.",
+    checkTitle: "Поштаны тексеріңіз",
+    checkSubtitle:
+      "Сілтеме бар хат жіберілді. Мәтінді талдау үшін оны ашып, мекенжайды растаңыз.",
+    goToDashboard: "Басқару тақтасына",
+    resend: "Хатты қайта жіберу",
+    resending: "Жіберілуде...",
+    resent: "Хат қайта жіберілді.",
+    resendError: "Хат жіберілмеді. Кейінірек қайталаңыз.",
+    banner:
+      "Талдау және басқа мүмкіндіктер үшін электрондық поштаны растаңыз.",
+    verifyTitle: "Поштаны растау",
+    loading: "Сілтеме тексерілуде...",
+    successTitle: "Пошта расталды",
+    successSubtitle: "Барлық функциялар қолжетімді.",
+    goAnalyze: "Талдауға өту",
+    invalidTitle: "Сілтеме жарамсыз",
+    invalidSubtitle:
+      "Мерзімі бітті немесе сілтеме қолданылған. Басқару тақтасынан жаңа хат сұраңыз.",
+    backHome: "Басты бетке",
+    loginPrompt: "Кіру",
+  },
+
   // Dashboard - Sidebar
   sidebar: {
     analyzeText: "Мәтінді талдау",
     history: "Тарих",
     profile: "Профиль",
+    billing: "Жазылым",
     signOut: "Шығу",
     lightTheme: "Жарық тақырып",
     darkTheme: "Қараңғы тақырып",
@@ -257,5 +282,29 @@ export const kk: Dictionary = {
     emailEmpty: "Email бос болмауы керек",
     updateSuccess: "Профиль сәтті жаңартылды",
     updateFailed: "Профильді жаңарту мүмкін болмады",
+  },
+  // Dashboard - Billing
+  billing: {
+    title: "Жазылым",
+    subtitle: "Тарифтік жоспарды басқару",
+    freePlan: "Тегін",
+    premiumPlan: "Премиум",
+    currentPlan: "Ағымдағы жоспар",
+    upgrade: "Премиумға көшу",
+    manageSub: "Жазылымды басқару",
+    dailyLimit: "Күнделікті лимит",
+    monthlyLimit: "Айлық лимит",
+    requests: "сұраулар",
+    successTitle: "Төлем сәтті өтті!",
+    successSubtitle: "Жазылымыңыз өңделуде...",
+    cancelTitle: "Төлем болдырмау",
+    cancelSubtitle: "Кез келген уақытта қайталап көруге болады",
+    retry: "Қайталап көру",
+    backToBilling: "Жазылымға оралу",
+    cancelingAtEnd: "Жазылым ағымдағы кезең соңында тоқтатылады",
+    active: "Белсенді",
+    processing: "Өңдеу...",
+    activeTill: "Белсенді дейін",
+    backToDashboard: "Панельге оралу",
   },
 } as const;

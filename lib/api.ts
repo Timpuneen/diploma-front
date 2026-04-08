@@ -14,6 +14,7 @@ import type {
   DetectionHistoryResponse,
   LoginCredentials,
   RegisterCredentials,
+  SubscriptionStatus,
   TelegramConnectResponse,
   TelegramStatusResponse,
   User,
@@ -160,6 +161,19 @@ class ApiClient {
     return this.request<User>("/auth/me");
   }
 
+  async verifyEmail(token: string): Promise<{ status: string }> {
+    return this.request<{ status: string }>("/auth/verify-email", {
+      method: "POST",
+      body: JSON.stringify({ token }),
+    });
+  }
+
+  async resendVerification(): Promise<void> {
+    return this.request<void>("/auth/resend-verification", {
+      method: "POST",
+    });
+  }
+
   // ---- AI Detection ----
 
   async detectText(text: string, language: string = "auto"): Promise<{ result: AnalysisResult; limits: UserLimits }> {
@@ -255,6 +269,20 @@ class ApiClient {
 
   async disconnectTelegram(): Promise<{ message: string }> {
     return this.request("/telegram/disconnect", { method: "DELETE" });
+  }
+
+  // ---- Billing ----
+
+  async getSubscriptionStatus(): Promise<SubscriptionStatus> {
+    return this.request<SubscriptionStatus>("/billing/subscription");
+  }
+
+  async createCheckoutSession(): Promise<{ url: string }> {
+    return this.request<{ url: string }>("/billing/checkout", { method: "POST" });
+  }
+
+  async createPortalSession(): Promise<{ url: string }> {
+    return this.request<{ url: string }>("/billing/portal", { method: "POST" });
   }
 }
 

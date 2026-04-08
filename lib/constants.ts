@@ -33,11 +33,16 @@ export const ROUTES = {
   HOME: "/",
   LOGIN: "/login",
   REGISTER: "/register",
+  VERIFY_EMAIL: "/verify-email",
+  CHECK_EMAIL: "/check-email",
   DASHBOARD: "/dashboard",
   ANALYZE: "/dashboard/analyze",
   RESULTS: "/dashboard/results",
   PROFILE: "/dashboard/profile",
   HISTORY: "/dashboard/history",
+  BILLING: "/dashboard/billing",
+  BILLING_SUCCESS: "/dashboard/billing/success",
+  BILLING_CANCEL: "/dashboard/billing/cancel",
 } as const;
 
 export const AUTH_TOKEN_KEY = "auth_token";

@@ -131,11 +131,35 @@ export const ru = {
     registerPasswordHint: "Минимум 8 символов, заглавная и строчная буква, цифра",
   },
 
+  verifyEmail: {
+    registerSuccess: "Проверьте почту — мы отправили ссылку для подтверждения.",
+    checkTitle: "Проверьте почту",
+    checkSubtitle:
+      "Мы отправили письмо со ссылкой. Откройте её и подтвердите адрес, чтобы пользоваться анализом.",
+    goToDashboard: "В панель",
+    resend: "Отправить письмо снова",
+    resending: "Отправка...",
+    resent: "Письмо отправлено повторно.",
+    resendError: "Не удалось отправить письмо. Попробуйте позже.",
+    banner:
+      "Подтвердите email, чтобы пользоваться анализом и остальными функциями.",
+    verifyTitle: "Подтверждение email",
+    loading: "Проверяем ссылку...",
+    successTitle: "Email подтверждён",
+    successSubtitle: "Теперь вам доступны все функции.",
+    goAnalyze: "Перейти к анализу",
+    invalidTitle: "Ссылка недействительна",
+    invalidSubtitle: "Срок действия истёк или ссылка уже использована. Запросите новое письмо в панели.",
+    backHome: "На главную",
+    loginPrompt: "Войти",
+  },
+
   // Dashboard - Sidebar
   sidebar: {
     analyzeText: "Анализ текста",
     history: "История",
     profile: "Профиль",
+    billing: "Подписка",
     signOut: "Выйти",
     lightTheme: "Светлая тема",
     darkTheme: "Темная тема",
@@ -255,6 +279,30 @@ export const ru = {
     emailEmpty: "Email не может быть пустым",
     updateSuccess: "Профиль успешно обновлён",
     updateFailed: "Не удалось обновить профиль",
+  },
+  // Dashboard - Billing
+  billing: {
+    title: "Подписка",
+    subtitle: "Управление тарифным планом",
+    freePlan: "Бесплатный",
+    premiumPlan: "Премиум",
+    currentPlan: "Текущий план",
+    upgrade: "Перейти на Премиум",
+    manageSub: "Управление подпиской",
+    dailyLimit: "Дневной лимит",
+    monthlyLimit: "Месячный лимит",
+    requests: "запросов",
+    successTitle: "Оплата прошла успешно!",
+    successSubtitle: "Обработка вашей подписки...",
+    cancelTitle: "Оплата отменена",
+    cancelSubtitle: "Вы можете попробовать снова в любое время",
+    retry: "Попробовать снова",
+    backToBilling: "Вернуться к подписке",
+    cancelingAtEnd: "Подписка будет отменена в конце текущего периода",
+    active: "Активна",
+    processing: "Обработка...",
+    activeTill: "Активна до",
+    backToDashboard: "Вернуться к панели",
   },
 } as const;
 
