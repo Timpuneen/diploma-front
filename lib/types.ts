@@ -159,7 +159,10 @@ export interface ValidationErrorItem {
 }
 
 export interface ApiError {
+  /** FastAPI may return a string, validation array, or (for some auth routes) a string with optional machine code. */
   detail: string | ValidationErrorItem[];
+  /** Present on password-reset errors and similar structured responses. */
+  code?: string;
   error_type?: string;
 }
 

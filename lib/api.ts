@@ -115,6 +115,35 @@ class ApiClient {
     return headers;
   }
 
+  /** JSON request without attaching the stored access token (public auth flows). */
+  private getPublicJsonHeaders(): HeadersInit {
+    return { "Content-Type": "application/json" };
+  }
+
+  private async requestPublic<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
+    const url = `${this.baseUrl}${endpoint}`;
+    const response = await fetch(url, {
+      ...options,
+      headers: {
+        ...this.getPublicJsonHeaders(),
+        ...options.headers,
+      },
+    });
+
+    if (!response.ok) {
+      const error: ApiError = await response.json().catch(() => ({
+        detail: "An unexpected error occurred",
+      }));
+      throw error;
+    }
+
+    if (response.status === 204) {
+      return undefined as T;
+    }
+
+    return response.json();
+  }
+
   /** Generic fetch wrapper with error handling. */
   async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
     const url = `${this.baseUrl}${endpoint}`;
@@ -171,6 +200,32 @@ class ApiClient {
   async resendVerification(): Promise<void> {
     return this.request<void>("/auth/resend-verification", {
       method: "POST",
+    });
+  }
+
+  async forgotPassword(payload: { email: string }): Promise<{ status: string; message: string }> {
+    return this.requestPublic("/auth/forgot-password", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+  }
+
+  async validateResetToken(
+    token: string
+  ): Promise<{ valid: boolean; code: string | null }> {
+    return this.requestPublic("/auth/reset-password/validate", {
+      method: "POST",
+      body: JSON.stringify({ token }),
+    });
+  }
+
+  async resetPassword(payload: {
+    token: string;
+    password: string;
+  }): Promise<{ status: string }> {
+    return this.requestPublic("/auth/reset-password", {
+      method: "POST",
+      body: JSON.stringify(payload),
     });
   }
 

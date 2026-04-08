@@ -74,13 +74,13 @@ export function LoginForm() {
           <div className="flex flex-col gap-2">
             <div className="flex items-center justify-between">
               <Label htmlFor="password">{t.login.password}</Label>
-              <button
-                type="button"
+              <Link
+                href={ROUTES.FORGOT_PASSWORD}
                 className="text-xs text-primary hover:underline"
                 tabIndex={-1}
               >
                 {t.login.forgotPassword}
-              </button>
+              </Link>
             </div>
             <Input
               id="password"
