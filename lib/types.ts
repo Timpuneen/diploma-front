@@ -10,6 +10,7 @@ export interface User {
   username: string;
   email: string;
   is_active: boolean;
+  is_verified: boolean;
 }
 
 export interface AuthTokens {

@@ -50,8 +50,8 @@ export function RegisterForm() {
     setIsSubmitting(true);
     try {
       await register({ username, email, password });
-      toast.success(t.register.success);
-      router.push(ROUTES.ANALYZE);
+      toast.success(t.verifyEmail.registerSuccess);
+      router.push(ROUTES.CHECK_EMAIL);
     } catch (err: unknown) {
       const apiError = err as { detail?: string | Array<{ loc?: string[]; msg?: string }> };
 

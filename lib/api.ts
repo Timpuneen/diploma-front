@@ -161,6 +161,19 @@ class ApiClient {
     return this.request<User>("/auth/me");
   }
 
+  async verifyEmail(token: string): Promise<{ status: string }> {
+    return this.request<{ status: string }>("/auth/verify-email", {
+      method: "POST",
+      body: JSON.stringify({ token }),
+    });
+  }
+
+  async resendVerification(): Promise<void> {
+    return this.request<void>("/auth/resend-verification", {
+      method: "POST",
+    });
+  }
+
   // ---- AI Detection ----
 
   async detectText(text: string, language: string = "auto"): Promise<{ result: AnalysisResult; limits: UserLimits }> {
