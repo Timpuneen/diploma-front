@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react"
+import React from "react";
 
 import { useState } from "react";
 import Link from "next/link";
@@ -31,11 +31,13 @@ export function LoginForm() {
     }
 
     setIsSubmitting(true);
+
     try {
       await authLogin({ login, password });
       toast.success(t.login.welcomeBack);
       router.push(ROUTES.ANALYZE);
     } catch {
+      setPassword("");
       toast.error(t.login.invalidCredentials);
     } finally {
       setIsSubmitting(false);
