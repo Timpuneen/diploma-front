@@ -362,6 +362,25 @@ export const ru = {
     processing: "Обработка...",
     activeTill: "Активна до",
     backToDashboard: "Вернуться к панели",
+    cancelSubscription: "Отменить подписку",
+    resumeSubscription: "Возобновить подписку",
+    cancelDialogTitle: "Отменить подписку?",
+    cancelDialogP1:
+      "Премиум останется доступен до конца текущего оплаченного периода",
+    cancelDialogP2:
+      "После этой даты тариф станет бесплатным, если вы не возобновите подписку.",
+    confirmCancel: "Да, отменить",
+    keepSubscription: "Оставить подписку",
+    cancelSuccess: "Запрос на отмену отправлен",
+    cancelAlreadyScheduled: "Отмена подписки уже запланирована",
+    resumeSuccess: "Подписка возобновлена",
+    syncPending: "Статус обновится через несколько секунд…",
+    errNoActiveSubscription: "Нет активной подписки",
+    errSubscriptionNotFound: "Подписка не найдена",
+    errCancellationNotScheduled: "Отмена не была запланирована",
+    errStripeNotConfigured: "Платежи временно недоступны",
+    errStripeFailed: "Ошибка платёжного сервиса. Попробуйте позже.",
+    errGeneric: "Не удалось выполнить действие",
   },
 } as const;
 

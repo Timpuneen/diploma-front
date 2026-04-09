@@ -67,6 +67,14 @@ export interface SubscriptionStatus {
   plan_type: string | null;
   current_period_end: string | null;
   cancel_at_period_end: boolean | null;
+  stripe_subscription_id?: string | null;
+}
+
+export interface BillingActionResponse {
+  status: string;
+  message: string;
+  sync_pending: boolean;
+  already_scheduled: boolean;
 }
 
 export interface AIDetectionWithLimitsResponse extends AIDetectionResponse {

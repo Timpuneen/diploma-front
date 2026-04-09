@@ -15,6 +15,7 @@ import type {
   LoginCredentials,
   RegisterCredentials,
   SubscriptionStatus,
+  BillingActionResponse,
   TelegramConnectResponse,
   TelegramStatusResponse,
   User,
@@ -352,6 +353,14 @@ class ApiClient {
 
   async createPortalSession(): Promise<{ url: string }> {
     return this.request<{ url: string }>("/billing/portal", { method: "POST" });
+  }
+
+  async cancelSubscription(): Promise<BillingActionResponse> {
+    return this.request<BillingActionResponse>("/billing/cancel", { method: "POST" });
+  }
+
+  async resumeSubscription(): Promise<BillingActionResponse> {
+    return this.request<BillingActionResponse>("/billing/resume", { method: "POST" });
   }
 }
 
