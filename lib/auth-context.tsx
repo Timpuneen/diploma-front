@@ -16,7 +16,19 @@ import {
 } from "react";
 import type { LoginCredentials, RegisterCredentials, User } from "./types";
 import { apiClient } from "./api";
-import { AUTH_TOKEN_KEY } from "./constants";
+import { AUTH_TOKEN_KEY, REFRESH_TOKEN_KEY } from "./constants";
+
+function readCookieValue(key: string): string | null {
+  if (typeof document === "undefined") return null;
+  const row = document.cookie.split("; ").find((r) => r.startsWith(`${key}=`));
+  if (!row) return null;
+  const raw = row.slice(key.length + 1);
+  try {
+    return decodeURIComponent(raw);
+  } catch {
+    return raw;
+  }
+}
 
 interface AuthState {
   user: User | null;
@@ -55,31 +67,27 @@ export function AuthProvider({ children }: AuthProviderProps) {
     isAuthenticated: false,
   });
 
-  // On mount, check if there's a stored token and fetch user profile
+  // On mount: if access or refresh cookie exists, load profile (getMe retries after POST /auth/refresh on 401)
   useEffect(() => {
-    const token = document.cookie
-      .split("; ")
-      .find((row) => row.startsWith("auth_token="))
-      ?.split("=")[1];
-
-    if (token) {
-      apiClient
-        .getMe()
-        .then((user) => {
-          setState({
-            user,
-            isLoading: false,
-            isAuthenticated: true,
-          });
-        })
-        .catch(() => {
-          // Token is invalid or expired — clear it
-          apiClient.clearTokens();
-          setState({ user: null, isLoading: false, isAuthenticated: false });
-        });
-    } else {
+    const access = readCookieValue(AUTH_TOKEN_KEY);
+    const refresh = readCookieValue(REFRESH_TOKEN_KEY);
+    if (!access && !refresh) {
       setState((prev) => ({ ...prev, isLoading: false }));
+      return;
     }
+    apiClient
+      .getMe()
+      .then((user) => {
+        setState({
+          user,
+          isLoading: false,
+          isAuthenticated: true,
+        });
+      })
+      .catch(() => {
+        apiClient.clearTokens();
+        setState({ user: null, isLoading: false, isAuthenticated: false });
+      });
   }, []);
 
   const login = useCallback(async (credentials: LoginCredentials) => {
@@ -130,11 +138,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }, []);
 
   const refreshUser = useCallback(async () => {
-    const token = document.cookie
-      .split("; ")
-      .find((row) => row.startsWith(`${AUTH_TOKEN_KEY}=`))
-      ?.split("=")[1];
-    if (!token) return;
+    const access = readCookieValue(AUTH_TOKEN_KEY);
+    const refresh = readCookieValue(REFRESH_TOKEN_KEY);
+    if (!access && !refresh) return;
     try {
       const user = await apiClient.getMe();
       setState((prev) => ({

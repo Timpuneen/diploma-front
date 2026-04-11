@@ -24,6 +24,9 @@ import type {
 } from "./types";
 import { AUTH_TOKEN_KEY, REFRESH_TOKEN_KEY } from "./constants";
 
+const DEFAULT_ACCESS_MAX_AGE = 30 * 60;
+const REFRESH_COOKIE_MAX_AGE = 7 * 24 * 60 * 60;
+
 /** Maps a backend DetectionResult to a UI-friendly verdict. */
 function mapResultToVerdict(result: string): "ai" | "human" | "mixed" {
   switch (result) {
@@ -74,8 +77,22 @@ function mapHistoryItem(item: DetectionHistoryItem): AnalysisHistoryItem {
   };
 }
 
+function readCookieValue(key: string): string | null {
+  if (typeof window === "undefined") return null;
+  const row = document.cookie.split("; ").find((r) => r.startsWith(`${key}=`));
+  if (!row) return null;
+  const raw = row.slice(key.length + 1);
+  try {
+    return decodeURIComponent(raw);
+  } catch {
+    return raw;
+  }
+}
+
 class ApiClient {
   private baseUrl: string;
+  /** Single in-flight refresh so parallel 401s share one POST /auth/refresh. */
+  private refreshInFlight: Promise<AuthTokens | null> | null = null;
 
   constructor(baseUrl: string) {
     this.baseUrl = baseUrl;
@@ -83,25 +100,57 @@ class ApiClient {
 
   /** Returns stored access token from cookie. */
   private getToken(): string | null {
-    if (typeof window === "undefined") return null;
-    return document.cookie
-      .split("; ")
-      .find((row) => row.startsWith(`${AUTH_TOKEN_KEY}=`))
-      ?.split("=")[1] ?? null;
+    return readCookieValue(AUTH_TOKEN_KEY);
   }
 
-  /** Stores auth tokens in cookies. */
+  /** Returns stored refresh token from cookie. */
+  private getRefreshToken(): string | null {
+    return readCookieValue(REFRESH_TOKEN_KEY);
+  }
+
+  /** Stores auth tokens in cookies. Access max-age follows backend `expires_in` when present. */
   setTokens(tokens: AuthTokens): void {
-    // Access token — short-lived (30 min from backend config)
-    document.cookie = `${AUTH_TOKEN_KEY}=${tokens.access_token}; path=/; max-age=1800; SameSite=Strict`;
-    // Refresh token — longer-lived (7 days)
-    document.cookie = `${REFRESH_TOKEN_KEY}=${tokens.refresh_token}; path=/; max-age=604800; SameSite=Strict`;
+    const accessMaxAge =
+      typeof tokens.expires_in === "number" && tokens.expires_in > 0
+        ? tokens.expires_in
+        : DEFAULT_ACCESS_MAX_AGE;
+    document.cookie = `${AUTH_TOKEN_KEY}=${encodeURIComponent(tokens.access_token)}; path=/; max-age=${accessMaxAge}; SameSite=Strict`;
+    document.cookie = `${REFRESH_TOKEN_KEY}=${encodeURIComponent(tokens.refresh_token)}; path=/; max-age=${REFRESH_COOKIE_MAX_AGE}; SameSite=Strict`;
   }
 
   /** Clears auth tokens. */
   clearTokens(): void {
     document.cookie = `${AUTH_TOKEN_KEY}=; path=/; max-age=0`;
     document.cookie = `${REFRESH_TOKEN_KEY}=; path=/; max-age=0`;
+  }
+
+  /**
+   * Exchange refresh for new tokens. Returns null on failure (cookies cleared).
+   * Concurrent calls share one network request.
+   */
+  async refreshTokens(): Promise<AuthTokens | null> {
+    if (typeof window === "undefined") return null;
+    const rt = this.getRefreshToken();
+    if (!rt) return null;
+
+    if (!this.refreshInFlight) {
+      this.refreshInFlight = (async () => {
+        try {
+          const tokens = await this.requestPublic<AuthTokens>("/auth/refresh", {
+            method: "POST",
+            body: JSON.stringify({ refresh_token: rt }),
+          });
+          this.setTokens(tokens);
+          return tokens;
+        } catch {
+          this.clearTokens();
+          return null;
+        } finally {
+          this.refreshInFlight = null;
+        }
+      })();
+    }
+    return this.refreshInFlight;
   }
 
   /** Constructs headers with optional auth bearer token. */
@@ -146,16 +195,42 @@ class ApiClient {
     return response.json();
   }
 
-  /** Generic fetch wrapper with error handling. */
-  async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
-    const url = `${this.baseUrl}${endpoint}`;
-    const response = await fetch(url, {
+  /**
+   * Authenticated fetch: on 401, try refresh once then retry (JSON and multipart).
+   */
+  private async authFetch(url: string, options: RequestInit = {}): Promise<Response> {
+    const isFormData =
+      typeof FormData !== "undefined" && options.body instanceof FormData;
+    const contentType = isFormData ? undefined : "application/json";
+
+    let response = await fetch(url, {
       ...options,
       headers: {
-        ...this.getHeaders("application/json"),
+        ...this.getHeaders(contentType),
         ...options.headers,
       },
     });
+
+    if (response.status === 401 && this.getRefreshToken()) {
+      const refreshed = await this.refreshTokens();
+      if (refreshed) {
+        response = await fetch(url, {
+          ...options,
+          headers: {
+            ...this.getHeaders(contentType),
+            ...options.headers,
+          },
+        });
+      }
+    }
+
+    return response;
+  }
+
+  /** Generic JSON request with Bearer; refresh + retry on 401. */
+  async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
+    const url = `${this.baseUrl}${endpoint}`;
+    const response = await this.authFetch(url, options);
 
     if (!response.ok) {
       const error: ApiError = await response.json().catch(() => ({
@@ -164,7 +239,6 @@ class ApiClient {
       throw error;
     }
 
-    // Handle 204 No Content
     if (response.status === 204) {
       return undefined as T;
     }
@@ -175,14 +249,14 @@ class ApiClient {
   // ---- Auth ----
 
   async login(credentials: LoginCredentials): Promise<AuthTokens> {
-    return this.request<AuthTokens>("/auth/login", {
+    return this.requestPublic<AuthTokens>("/auth/login", {
       method: "POST",
       body: JSON.stringify(credentials),
     });
   }
 
   async register(credentials: RegisterCredentials): Promise<AuthTokens> {
-    return this.request<AuthTokens>("/auth/register", {
+    return this.requestPublic<AuthTokens>("/auth/register", {
       method: "POST",
       body: JSON.stringify(credentials),
     });
@@ -262,14 +336,9 @@ class ApiClient {
     formData.append("file", file);
     formData.append("language", language);
 
-    const token = this.getToken();
-    const headers: HeadersInit = {};
-    if (token) headers["Authorization"] = `Bearer ${token}`;
-
     const url = `${this.baseUrl}/ai-detection/detect-file`;
-    const response = await fetch(url, {
+    const response = await this.authFetch(url, {
       method: "POST",
-      headers,
       body: formData,
     });
 
