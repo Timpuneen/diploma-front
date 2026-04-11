@@ -92,6 +92,7 @@ export interface DetectionHistoryItem {
   result: DetectionResult;
   confidence: number;
   text_preview: string;
+  word_count?: number;
   created_at: string;
   processing_time_ms: number | null;
 }

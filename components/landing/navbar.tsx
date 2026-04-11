@@ -45,7 +45,7 @@ export function Navbar() {
           </span>
         </Link>
 
-        <div className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-8 md:flex">
+        <div className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-8 navbar:flex">
           {NAV_LINKS.map((link) => (
             <a
               key={link.href}
@@ -58,7 +58,7 @@ export function Navbar() {
           ))}
         </div>
 
-        <div className="hidden items-center gap-3 md:flex">
+        <div className="hidden items-center gap-3 navbar:flex">
           <LanguageSwitcher />
           {!isLoading && (
             isAuthenticated ? (
@@ -81,7 +81,7 @@ export function Navbar() {
           </Button>
         </div>
 
-        <div className="flex items-center gap-2 md:hidden">
+        <div className="flex items-center gap-2 navbar:hidden">
           <LanguageSwitcher />
           <button
             type="button"
@@ -95,7 +95,7 @@ export function Navbar() {
       </nav>
 
       {isMobileOpen && (
-        <div className="border-t border-border/50 bg-background px-6 py-4 md:hidden">
+        <div className="border-t border-border/50 bg-background px-6 py-4 navbar:hidden">
           <div className="flex flex-col gap-4">
             {NAV_LINKS.map((link) => (
               <a

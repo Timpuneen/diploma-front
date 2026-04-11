@@ -66,6 +66,7 @@ function mapDetectionToAnalysisResult(
 
 /** Converts a backend history item into the legacy AnalysisHistoryItem shape. */
 function mapHistoryItem(item: DetectionHistoryItem): AnalysisHistoryItem {
+  console.log("[v0] History item from backend:", JSON.stringify(item, null, 2));
   const aiProb = Math.round(item.confidence * 100);
   return {
     id: item.id,
@@ -73,7 +74,7 @@ function mapHistoryItem(item: DetectionHistoryItem): AnalysisHistoryItem {
     aiProbability: item.result === "human_written" ? 100 - aiProb : aiProb,
     verdict: mapResultToVerdict(item.result),
     createdAt: item.created_at,
-    wordCount: item.text_preview.split(/\s+/).length,
+    wordCount: item.word_count ?? item.text_preview.split(/\s+/).filter(Boolean).length,
   };
 }
 
