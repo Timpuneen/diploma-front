@@ -67,7 +67,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
     isAuthenticated: false,
   });
 
-  // On mount: if access or refresh cookie exists, load profile (getMe retries after POST /auth/refresh on 401)
+  // On mount: if access or refresh cookie exists, load profile.
+  // When access cookie expired (browser removed it) but refresh remains, refresh tokens first — avoids 403 "Not authenticated" from FastAPI HTTPBearer.
   useEffect(() => {
     const access = readCookieValue(AUTH_TOKEN_KEY);
     const refresh = readCookieValue(REFRESH_TOKEN_KEY);
@@ -75,19 +76,31 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setState((prev) => ({ ...prev, isLoading: false }));
       return;
     }
-    apiClient
-      .getMe()
-      .then((user) => {
-        setState({
-          user,
-          isLoading: false,
-          isAuthenticated: true,
-        });
-      })
-      .catch(() => {
-        apiClient.clearTokens();
-        setState({ user: null, isLoading: false, isAuthenticated: false });
-      });
+    let cancelled = false;
+    void (async () => {
+      if (!access && refresh) {
+        await apiClient.refreshTokens();
+      }
+      if (cancelled) return;
+      try {
+        const user = await apiClient.getMe();
+        if (!cancelled) {
+          setState({
+            user,
+            isLoading: false,
+            isAuthenticated: true,
+          });
+        }
+      } catch {
+        if (!cancelled) {
+          apiClient.clearTokens();
+          setState({ user: null, isLoading: false, isAuthenticated: false });
+        }
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const login = useCallback(async (credentials: LoginCredentials) => {

@@ -89,10 +89,31 @@ function readCookieValue(key: string): string | null {
   }
 }
 
+/** Merge init headers with base headers (supports Headers instances, not only plain objects). */
+function mergeRequestHeaders(
+  base: Record<string, string>,
+  init?: RequestInit
+): Headers {
+  const merged = new Headers();
+  for (const [k, v] of Object.entries(base)) {
+    merged.set(k, v);
+  }
+  if (init?.headers) {
+    const extra = new Headers(init.headers as HeadersInit);
+    extra.forEach((value, key) => merged.set(key, value));
+  }
+  return merged;
+}
+
+function isAuthRefreshUrl(url: string): boolean {
+  return url.includes("/auth/refresh");
+}
+
 class ApiClient {
   private baseUrl: string;
   /** Single in-flight refresh so parallel 401s share one POST /auth/refresh. */
   private refreshInFlight: Promise<AuthTokens | null> | null = null;
+  private proactiveTimer: ReturnType<typeof setTimeout> | null = null;
 
   constructor(baseUrl: string) {
     this.baseUrl = baseUrl;
@@ -116,10 +137,33 @@ class ApiClient {
         : DEFAULT_ACCESS_MAX_AGE;
     document.cookie = `${AUTH_TOKEN_KEY}=${encodeURIComponent(tokens.access_token)}; path=/; max-age=${accessMaxAge}; SameSite=Strict`;
     document.cookie = `${REFRESH_TOKEN_KEY}=${encodeURIComponent(tokens.refresh_token)}; path=/; max-age=${REFRESH_COOKIE_MAX_AGE}; SameSite=Strict`;
+    this.scheduleProactiveRefresh(accessMaxAge);
+  }
+
+  private clearProactiveTimer(): void {
+    if (this.proactiveTimer !== null) {
+      clearTimeout(this.proactiveTimer);
+      this.proactiveTimer = null;
+    }
+  }
+
+  /**
+   * Silently refresh before access expiry so the access cookie is not dropped while the tab is idle.
+   */
+  private scheduleProactiveRefresh(accessTtlSeconds: number): void {
+    this.clearProactiveTimer();
+    if (typeof window === "undefined") return;
+    const marginSec = 60;
+    const delayMs = Math.max(10_000, (accessTtlSeconds - marginSec) * 1000);
+    this.proactiveTimer = setTimeout(() => {
+      this.proactiveTimer = null;
+      void this.refreshTokens();
+    }, delayMs);
   }
 
   /** Clears auth tokens. */
   clearTokens(): void {
+    this.clearProactiveTimer();
     document.cookie = `${AUTH_TOKEN_KEY}=; path=/; max-age=0`;
     document.cookie = `${REFRESH_TOKEN_KEY}=; path=/; max-age=0`;
   }
@@ -153,9 +197,9 @@ class ApiClient {
     return this.refreshInFlight;
   }
 
-  /** Constructs headers with optional auth bearer token. */
-  private getHeaders(contentType?: string): HeadersInit {
-    const headers: HeadersInit = {};
+  /** Base headers for authenticated requests (Bearer when access cookie is present). */
+  private buildAuthHeaders(contentType?: string): Record<string, string> {
+    const headers: Record<string, string> = {};
     if (contentType) {
       headers["Content-Type"] = contentType;
     }
@@ -196,7 +240,8 @@ class ApiClient {
   }
 
   /**
-   * Authenticated fetch: on 401, try refresh once then retry (JSON and multipart).
+   * Authenticated fetch: on 401, or on 403 when access cookie is gone but refresh exists
+   * (FastAPI returns 403 "Not authenticated" if Authorization is missing), refresh once then retry.
    */
   private async authFetch(url: string, options: RequestInit = {}): Promise<Response> {
     const isFormData =
@@ -205,21 +250,24 @@ class ApiClient {
 
     let response = await fetch(url, {
       ...options,
-      headers: {
-        ...this.getHeaders(contentType),
-        ...options.headers,
-      },
+      headers: mergeRequestHeaders(this.buildAuthHeaders(contentType), options),
     });
 
-    if (response.status === 401 && this.getRefreshToken()) {
+    const hasRefresh = !!this.getRefreshToken();
+    const missingAccessButHaveRefresh =
+      !this.getToken() && hasRefresh;
+    const shouldTryRefresh =
+      hasRefresh &&
+      !isAuthRefreshUrl(url) &&
+      (response.status === 401 ||
+        (response.status === 403 && missingAccessButHaveRefresh));
+
+    if (shouldTryRefresh) {
       const refreshed = await this.refreshTokens();
       if (refreshed) {
         response = await fetch(url, {
           ...options,
-          headers: {
-            ...this.getHeaders(contentType),
-            ...options.headers,
-          },
+          headers: mergeRequestHeaders(this.buildAuthHeaders(contentType), options),
         });
       }
     }
